@@ -1,28 +1,46 @@
 package org.example;
 
 import java.math.BigDecimal;
-import java.util.Scanner;
 
 public class SavingsAccount extends Account {
-    Scanner userInput = new Scanner(System.in);
     private final BigDecimal MINIMUM_BALANCE = new BigDecimal(100);
     private final BigDecimal OVERDRAFT_FEE = new BigDecimal(10);
-    private UserInterface ui;
+    private final int SAVINGS_WITHDRAWAL_MAX = 2;
+    private int withdrawalCounter = 0;
+
 
     public SavingsAccount(String accountType, int accountNumber, UserInterface ui) {
         super(accountType, accountNumber, ui);
     }
 
     @Override
-    public void withdraw() {
-        ui.put("Please enter withdrawal amount: ");
-        BigDecimal bigWithdrawal = ui.getBigDec();
-        if (this.getBalance().subtract(bigWithdrawal).compareTo(MINIMUM_BALANCE) < 0) {
-            this.balance.subtract(bigWithdrawal.add(OVERDRAFT_FEE));
-            System.out.println("Your balance fell below the minimum balance of $100 and is assessed a fee of $10.");
-            System.out.println("Your current balance is $" + this.balance);
-        } else {
-            super.withdraw();
+    public BigDecimal withdraw(BigDecimal bd) {
+        if (bd.compareTo(BigDecimal.ZERO) < 0){
+            System.out.println("Please enter a positive withdrawal amount");
+            return this.getBalance();
         }
+        if (withdrawalCounter == SAVINGS_WITHDRAWAL_MAX) {
+            System.out.println("You have reached the maximum number of allowed withdrawals per session from a savings account.");
+            return this.getBalance();
+        }
+
+        if (this.getBalance().subtract(bd).compareTo(MINIMUM_BALANCE) < 0) {
+            if (this.getBalance().subtract(bd).compareTo(BigDecimal.ZERO) < 0) {
+                System.out.println("Withdrawals equal or greater than current balance are not allowed. Transaction failed");
+                return this.getBalance();
+            } else {
+                this.balance = this.balance.subtract(bd.add(OVERDRAFT_FEE));
+                withdrawalCounter++;
+                System.out.println("Your balance fell below the minimum balance of $100 and is assessed a fee of $10.");
+                System.out.println("Your current balance is $" + this.getBalance());
+                System.out.printf("You have %d remaining withdrawals today. ", SAVINGS_WITHDRAWAL_MAX - withdrawalCounter);
+            }
+        } else {
+            super.withdraw(bd);
+            withdrawalCounter++;
+            System.out.printf("You have %d remaining withdrawals today. ", SAVINGS_WITHDRAWAL_MAX - withdrawalCounter);
+
+        }
+        return this.getBalance();
     }
 }

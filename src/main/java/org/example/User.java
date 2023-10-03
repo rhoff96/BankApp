@@ -4,16 +4,14 @@ package org.example;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class User {
 
-    Scanner userInput = new Scanner(System.in);
     public Account currentAccount;
     private String name;
     private String password;
     private BigDecimal totalBalance;
-    private UserInterface ui;
+    private final UserInterface ui;
 
     public List<Account> userAccounts = new ArrayList<>();
 
@@ -48,25 +46,27 @@ public class User {
         System.out.printf("Welcome to our bank, %s. Would you like to open a (C)hecking or (S)avings account today? ", currentUser.getFirstName());
         String accountType = ui.getAlpha();
         if (accountType.equalsIgnoreCase("c")) {
-            CheckingAccount checking = new CheckingAccount("Checking", (int)(Math.random()*100000), ui);
+            CheckingAccount checking = new CheckingAccount("Checking", (int) (Math.random() * 100000), ui);
             currentUser.userAccounts.add(checking);
             currentAccount = checking;
         } else if (accountType.equalsIgnoreCase("s")) {
-            SavingsAccount savings = new SavingsAccount("Savings", (int)(Math.random()*100000), ui);
+            SavingsAccount savings = new SavingsAccount("Savings", (int) (Math.random() * 100000), ui);
             currentUser.userAccounts.add(savings);
             currentAccount = savings;
+        } else {
+            System.out.println("Please choose (C) or (S)");
+            createAccount(currentUser);
         }
         return currentAccount;
     }
 
     public Account selectAccount(User currentUser) {
-        System.out.printf("Welcome back, %s. Accounts available for banking: ", currentUser.getFirstName());
+        ui.put("Accounts available for banking: ");
         for (Account account : currentUser.userAccounts) {
-            ui.put(account.accountType + "--" + account.getAccountNumber());
+            ui.put(account.accountType + " #" + account.getAccountNumber());
         }
-        ui.put("Please an account number to access: ");
-        String typeSelection = ui.getAlpha();
-        int intSelection = Integer.parseInt(typeSelection);
+        ui.put("Please enter an account number to access: ");
+        int intSelection = ui.getInt();
         for (Account account : currentUser.userAccounts) {
             if (account.getAccountNumber() == intSelection) {
                 currentAccount = account;
@@ -81,7 +81,24 @@ public class User {
             System.out.println(account.accountType + " #" + account.getAccountNumber() + ": $" + account.getBalance());
             totalBalance = totalBalance.add(account.getBalance());
         }
-        return "Total Balance: $"+ totalBalance;
+        return "Total Balance: $" + totalBalance;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        boolean isEqual = true;
+        User other = (User) obj;
+
+        if (!this.getClass().equals(other.getClass())) {
+            isEqual = false;
+        }
+        if (!this.getName().equals(other.getName())) {
+            isEqual = false;
+        }
+        if (!this.getPassword().equals(other.getPassword())) {
+            isEqual = false;
+        }
+        return isEqual;
     }
 }
 

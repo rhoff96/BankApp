@@ -10,7 +10,7 @@ public class AuthenticationContext {
     public String name;
     public String password;
     public boolean userIsNew;
-    private UserInterface ui;
+    private final UserInterface ui;
 
 
     public AuthenticationContext(UserInterface ui){
@@ -20,12 +20,16 @@ public class AuthenticationContext {
     public void welcome() {
         ui.put("Welcome to Tech Elevator Bank!\n");
         ui.put("===$$=====Bank Policies=====$$===\n");
-        ui.put("1. Savings accounts must maintain a minimum balance of $100. Withdrawls below this balance will incur a $10 fee.");
-        ui.put("2. Savings accounts may only have two withdrawls per banking session.\n");
+        ui.put("1. Savings accounts must maintain a minimum balance of $100. Withdrawals below this balance will incur a $10 fee.");
+        ui.put("2. Savings accounts may only have two withdrawals per banking session.\n");
         ui.put("Please log in by entering your 'Firstname Lastname': ");
+        //adding a user to test functionality
+        namePasswords.put("Russell Hoffman","admin");
+        User ml = new User("Russell Hoffman","admin",ui);
+        ml.currentAccount = new CheckingAccount("Checking",123,ui);
         name = ui.getAlpha();
         ui.put("Please enter your password: ");
-        password = ui.getAlpha();
+        password = ui.get();
         authenticate(name, password);
     }
 
@@ -38,6 +42,8 @@ public class AuthenticationContext {
                     for (User user : userList) {
                         if (user.getPassword().equals(password)) {
                             currentUser = user;
+                            System.out.printf("Welcome back, %s. \n",
+                                    currentUser.getFirstName());
                         }
                     }
                 } else {

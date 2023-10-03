@@ -2,6 +2,7 @@ package org.example;
 
 import java.math.BigDecimal;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 public class UserInterface {
 
@@ -12,26 +13,46 @@ public class UserInterface {
         System.out.println(message);
     }
 
+    public String get() {
+        return userInput.nextLine();
+    }
+
     public String getAlpha() {
         String response = userInput.nextLine();
         while (response.equals("")) {
             System.out.println("Please enter word(s).");
             response = userInput.nextLine();
         }
-        return response;
-    }
-    public int getNum(){
-        String response = userInput.nextLine();
-        while (!(Integer.parseInt(response) <= 10 && Integer.parseInt(response) > 0)){
-            System.out.println("Please provide a valid number choice between 1 and 10");
+        while (!Pattern.compile("[a-zA-Z\\s]*").matcher(response).matches()) {
+            System.out.println("Please input only letters A-Z.");
             response = userInput.nextLine();
         }
-        int intResponse = Integer.parseInt(response);
-        return intResponse;
+        return response;
+    }
+    public int getInt(){
+        String response = userInput.nextLine();
+        while (response.equals("")) {
+            System.out.println("Please enter a numerical value");
+            response = userInput.nextLine();
+        }
+        while (Pattern.compile("[a-zA-Z\\s]*").matcher(response).matches()) {
+            System.out.println("Please enter a numerical value");
+            response = userInput.nextLine();
+        }
+        return Integer.parseInt(response);
+
     }
     public BigDecimal getBigDec() {
-        BigDecimal bigDec = new BigDecimal(getAlpha());
-        return bigDec;
+        String response = userInput.nextLine();
+        while (response.equals("")) {
+            System.out.println("Please enter a numerical value");
+            response = userInput.nextLine();
+        }
+        while (Pattern.compile("[a-zA-Z\\s]*").matcher(response).matches()) {
+            System.out.println("Please enter a numerical value");
+            response = userInput.nextLine();
+        }
+        return new BigDecimal(response);
     }
 
 }

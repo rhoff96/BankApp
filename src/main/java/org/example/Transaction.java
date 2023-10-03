@@ -1,16 +1,12 @@
 package org.example;
 
 import java.math.BigDecimal;
-import java.util.Scanner;
 
 public class Transaction {
-    Scanner userInput = new Scanner(System.in);
     public User currentUser;
     public Account currentAccount;
     private boolean isBanking = true;
-    private int withdrawalCounter = 0;
-    private int SAVINGS_WITHDRAWAL_MAX = 2;
-    private UserInterface ui;
+    private final UserInterface ui;
 
     public Transaction(User currentUser, Account currentAccount, UserInterface ui) {
         this.currentAccount = currentAccount;
@@ -25,12 +21,15 @@ public class Transaction {
 
             if (currentAccount.getBalance().compareTo(new BigDecimal(0)) == 0) {
                 System.out.printf("Your %s account has a balance of $0.\n", currentAccount.accountType);
-                currentAccount.deposit();
+                ui.put("Please enter deposit amount: ");
+                BigDecimal bigCredit = ui.getBigDec();
+                currentAccount.deposit(bigCredit);
             }
             if (currentUser.userAccounts.size() == 1) {
                 ui.put("Would you like to (W)ithdraw funds, (D)eposit funds, (G)et balance, or (O)pen another account? ");
             } else {
-                ui.put("Would you like to (W)ithdraw funds, (D)eposit funds, (G)et balance, (T)ransfer between accounts, (L)ist accounts, or (O)pen another account? ");
+                ui.put("Would you like to (W)ithdraw funds, (D)eposit funds, (T)ransfer between accounts," +
+                        " (L)ist accounts, (S)witch accounts or (O)pen another account? ");
             }
             String choice = ui.getAlpha();
 
@@ -38,7 +37,7 @@ public class Transaction {
 
             boolean wrongChoice = true;
             while (wrongChoice) {
-                ui.put("Current account is " + currentUser.currentAccount.accountType + " #" + currentUser.currentAccount.getAccountNumber());
+                ui.put("Current account is " + currentUser.currentAccount.toString());
                 ui.put("Would you like to keep banking? (y/n)");
                 String response = ui.getAlpha();
                 if (response.equalsIgnoreCase("n")) {
@@ -48,7 +47,7 @@ public class Transaction {
                     wrongChoice = false;
                     isBanking = true;
                 } else {
-                   ui.put("Please enter y or n.");
+                    ui.put("Please enter y or n.");
                 }
             }
         }
@@ -57,20 +56,14 @@ public class Transaction {
 
     public void transactionAction(String choice) {
         if (choice.equalsIgnoreCase("W")) {
-            if (currentAccount.accountType.equals("Savings")) {
-                if (withdrawalCounter == SAVINGS_WITHDRAWAL_MAX) {
-                    ui.put("You have reached the maximum number of allowed withdrawals per session in a savings account.");
-                } else {
-                    currentAccount.withdraw();
-                    withdrawalCounter++;
-                    System.out.printf("You have %d remaining withdrawals today. ", SAVINGS_WITHDRAWAL_MAX - withdrawalCounter);
-                }
-            } else {
-                currentAccount.withdraw();
-            }
+            ui.put("Please enter withdrawal amount: ");
+            BigDecimal bigDebit = ui.getBigDec();
+            currentAccount.withdraw(bigDebit);
         }
         if (choice.equalsIgnoreCase("D")) {
-            currentAccount.deposit();
+            ui.put("Please enter deposit amount: ");
+            BigDecimal bigCredit = ui.getBigDec();
+            currentAccount.deposit(bigCredit);
         }
         if (choice.equalsIgnoreCase("G")) {
             ui.put("Your current balance is $" + currentAccount.getBalance());
@@ -82,7 +75,10 @@ public class Transaction {
             currentAccount = currentUser.createAccount(currentUser);
         }
         if (choice.equalsIgnoreCase("L")) {
-           ui.put(currentUser.getTotalBalance(currentUser));
+            ui.put(currentUser.getTotalBalance(currentUser));
+        }
+        if (choice.equalsIgnoreCase("S")) {
+            currentUser.selectAccount(currentUser);
         }
     }
 }
