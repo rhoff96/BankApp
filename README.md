@@ -7,6 +7,7 @@ I really enjoyed the process of building functionality onto a project that essen
 
 
 I began development of the project in Week 1 of the Tech Elevator Software Development bootcamp, and added more functionality as the program progressed through Week 3. Some of these evolving features included:
+
 -Creating Collections to hold user data
 
 -Employing BigDecimal to make accurate financial calculations
@@ -35,4 +36,4 @@ In addition to the concepts covered during these first weeks, I researched regul
 
 Please note that a few lines of sample user data are hard coded into the current program in order to test the functionality that depends on persistent data.
 
-I intend to build this program out further to store data in a database, and eventually create a front end beyond the CLI. Additional features that I hope to incorporate include transfers between users, creating savings account interest, and a social feed of transactions.
+I intend to build this program out further to store data in a database, and eventually create a front end beyond the CLI. Additional features that I hope to incorporate include transfers between users, creating unique savings account interest based on account balance tiers, and a social feed of transactions.
