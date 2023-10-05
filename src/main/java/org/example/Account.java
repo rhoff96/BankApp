@@ -71,7 +71,7 @@ public abstract class Account {
         }
         ui.put("Transfer completed.");
         currentUser.getTotalBalance(currentUser);
-        log.logEntry(currentUser, currentUser.currentAccount, transferBig);
+        log.logEntry(currentUser, currentUser.currentAccount);
     }
 
     public BigDecimal deposit(BigDecimal bd) {
@@ -90,6 +90,6 @@ public abstract class Account {
 
     @Override
     public String toString() {
-        return this.accountType + " #" + this.getAccountNumber() + ": $" + this.getBalance();
+        return this.accountType + " #" + this.getAccountNumber();
     }
 }

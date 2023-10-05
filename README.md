@@ -29,7 +29,7 @@ I began development of the project in Week 1 of the Tech Elevator Software Devel
 
 -Using File I/O to store transactions in a log
 
-In addition to the concepts covered during these first weeks, I researched regular expressions in order to more easily validate user input.
+In addition to the concepts covered during these first weeks, I did additional research on regular expressions in order to more easily validate user input, as well as switch statements, and enums.
 
 
 

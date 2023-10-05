@@ -1,9 +1,9 @@
 package org.example;
 
 
-public class Main {
-    public static void main(String[] args) {
+public class BankingApp {
 
+    public void run() {
         Account currentAccount;
         User currentUser;
         UserInterface ui = new UserInterface();
@@ -20,6 +20,12 @@ public class Main {
 
         Transaction transact = new Transaction(currentUser, currentAccount, ui);
         transact.transact();
+    }
+
+
+    public static void main(String[] args) {
+        BankingApp ba = new BankingApp();
+        ba.run();
     }
 }
 

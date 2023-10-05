@@ -5,12 +5,13 @@ import java.math.BigDecimal;
 public class SavingsAccount extends Account {
     private final BigDecimal MINIMUM_BALANCE = new BigDecimal(100);
     private final BigDecimal OVERDRAFT_FEE = new BigDecimal(10);
-    private final int SAVINGS_WITHDRAWAL_MAX = 2;
     private int withdrawalCounter = 0;
-
 
     public SavingsAccount(String accountType, int accountNumber, UserInterface ui) {
         super(accountType, accountNumber, ui);
+    }
+    public void accrueInterest(User currentUser){
+        //work in progress
     }
 
     @Override
@@ -19,6 +20,7 @@ public class SavingsAccount extends Account {
             System.out.println("Please enter a positive withdrawal amount");
             return this.getBalance();
         }
+        final int SAVINGS_WITHDRAWAL_MAX = 2;
         if (withdrawalCounter == SAVINGS_WITHDRAWAL_MAX) {
             System.out.println("You have reached the maximum number of allowed withdrawals per session from a savings account.");
             return this.getBalance();

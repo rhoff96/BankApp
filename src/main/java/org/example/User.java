@@ -10,15 +10,16 @@ public class User {
     public Account currentAccount;
     private String name;
     private String password;
-    private BigDecimal totalBalance;
     private final UserInterface ui;
-
+    private Tier tier;
     public List<Account> userAccounts = new ArrayList<>();
+
 
     public User(String name, String password, UserInterface ui) {
         this.name = name;
         this.password = password;
         this.ui = ui;
+        this.tier = null;
     }
 
     public String getName() {
@@ -44,18 +45,21 @@ public class User {
 
     public Account createAccount(User currentUser) {
         System.out.printf("Welcome to our bank, %s. Would you like to open a (C)hecking or (S)avings account today? ", currentUser.getFirstName());
-        String accountType = ui.getAlpha();
-        if (accountType.equalsIgnoreCase("c")) {
-            CheckingAccount checking = new CheckingAccount("Checking", (int) (Math.random() * 100000), ui);
-            currentUser.userAccounts.add(checking);
-            currentAccount = checking;
-        } else if (accountType.equalsIgnoreCase("s")) {
-            SavingsAccount savings = new SavingsAccount("Savings", (int) (Math.random() * 100000), ui);
-            currentUser.userAccounts.add(savings);
-            currentAccount = savings;
-        } else {
-            System.out.println("Please choose (C) or (S)");
-            createAccount(currentUser);
+        String accountType = ui.getAlpha().toLowerCase();
+        switch (accountType) {
+            case "c":
+                CheckingAccount checking = new CheckingAccount("Checking", (int) (Math.random() * 100000), ui);
+                currentUser.userAccounts.add(checking);
+                currentAccount = checking;
+                break;
+            case "s":
+                SavingsAccount savings = new SavingsAccount("Savings", (int) (Math.random() * 100000), ui);
+                currentUser.userAccounts.add(savings);
+                currentAccount = savings;
+                break;
+            default:
+                System.out.println("Please choose (C) or (S)");
+                createAccount(currentUser);
         }
         return currentAccount;
     }
@@ -75,20 +79,60 @@ public class User {
         return currentAccount;
     }
 
-    public String getTotalBalance(User currentUser) {
-        totalBalance = BigDecimal.ZERO;
+    public BigDecimal getTotalBalance(User currentUser) {
+        BigDecimal totalBalance = BigDecimal.ZERO;
         for (Account account : currentUser.userAccounts) {
             System.out.println(account.accountType + " #" + account.getAccountNumber() + ": $" + account.getBalance());
             totalBalance = totalBalance.add(account.getBalance());
         }
-        return "Total Balance: $" + totalBalance;
+        return totalBalance;
+    }
+
+    public enum Tier {
+        Bronze,
+        Silver,
+        Gold,
+        Platinum
+    }
+
+    public void setTier(User currentUser) {
+        if (currentUser.getTotalBalance(currentUser).compareTo(new BigDecimal("5000")) < 0) {
+            currentUser.tier = Tier.Bronze;
+        } else if (currentUser.getTotalBalance(currentUser).compareTo(new BigDecimal("10000")) < 0) {
+            currentUser.tier = Tier.Silver;
+        } else if (currentUser.getTotalBalance(currentUser).compareTo(new BigDecimal("25000")) < 0) {
+            currentUser.tier = Tier.Gold;
+        } else {
+            currentUser.tier = Tier.Platinum;
+        }
+        setInterestRate(currentUser);
+    }
+
+    public Tier getTier() {
+        return tier;
+    }
+
+    public BigDecimal setInterestRate(User currentUser) {
+        BigDecimal ir = null;
+        if (currentUser.tier == Tier.Bronze) {
+            ir = new BigDecimal(".02");
+        }
+        if (currentUser.tier == Tier.Silver) {
+            ir = new BigDecimal(".03");
+        }
+        if (currentUser.tier == Tier.Gold) {
+            ir = new BigDecimal(".04");
+        }
+        if (currentUser.tier == Tier.Platinum) {
+            ir = new BigDecimal(".05");
+        }
+        return ir;
     }
 
     @Override
     public boolean equals(Object obj) {
         boolean isEqual = true;
         User other = (User) obj;
-
         if (!this.getClass().equals(other.getClass())) {
             isEqual = false;
         }
