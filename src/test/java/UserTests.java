@@ -12,7 +12,7 @@ public class UserTests {
     private Account a = new CheckingAccount("Checking",123,ui);
     @Test
     public void when_user_has_total_balance_1000_then_bronze() {
-        a.deposit(new BigDecimal("1000"));
+        a.deposit(u, new BigDecimal("1000"));
         u.setTier(u);
         User.Tier actual = u.getTier();
         User.Tier expected = User.Tier.Bronze;

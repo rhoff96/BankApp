@@ -15,7 +15,8 @@ public class SavingsAccount extends Account {
     }
 
     @Override
-    public BigDecimal withdraw(BigDecimal bd) {
+    public BigDecimal withdraw(User currentUser, Account currentAccount, BigDecimal bd) {
+        BigDecimal tempBalance = currentUser.currentAccount.getBalance();
         if (bd.compareTo(BigDecimal.ZERO) < 0){
             System.out.println("Please enter a positive withdrawal amount");
             return this.getBalance();
@@ -38,11 +39,13 @@ public class SavingsAccount extends Account {
                 System.out.printf("You have %d remaining withdrawals today. ", SAVINGS_WITHDRAWAL_MAX - withdrawalCounter);
             }
         } else {
-            super.withdraw(bd);
+            super.withdraw(currentUser, currentUser.currentAccount, bd);
             withdrawalCounter++;
             System.out.printf("You have %d remaining withdrawals today. ", SAVINGS_WITHDRAWAL_MAX - withdrawalCounter);
 
         }
+        String typeAmount = "Withdrawal $"+ (tempBalance.subtract(this.getBalance()));
+        log.logEntry(currentUser, currentUser.currentAccount, typeAmount);
         return this.getBalance();
     }
 }

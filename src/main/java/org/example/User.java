@@ -44,24 +44,24 @@ public class User {
     }
 
     public Account createAccount(User currentUser) {
-        System.out.printf("Welcome to our bank, %s. Would you like to open a (C)hecking or (S)avings account today? ", currentUser.getFirstName());
-        String accountType = ui.getAlpha().toLowerCase();
-        switch (accountType) {
-            case "c":
-                CheckingAccount checking = new CheckingAccount("Checking", (int) (Math.random() * 100000), ui);
-                currentUser.userAccounts.add(checking);
-                currentAccount = checking;
-                break;
-            case "s":
-                SavingsAccount savings = new SavingsAccount("Savings", (int) (Math.random() * 100000), ui);
-                currentUser.userAccounts.add(savings);
-                currentAccount = savings;
-                break;
-            default:
-                System.out.println("Please choose (C) or (S)");
-                createAccount(currentUser);
+        while (true) {
+            System.out.printf("Welcome to our bank, %s. Would you like to open a (C)hecking or (S)avings account today? ", currentUser.getFirstName());
+            String accountType = ui.getAlpha().toLowerCase();
+            switch (accountType) {
+                case "c":
+                    CheckingAccount checking = new CheckingAccount("Checking", (int) (Math.random() * 100000), ui);
+                    currentUser.userAccounts.add(checking);
+                    currentAccount = checking;
+                    return currentAccount;
+                case "s":
+                    SavingsAccount savings = new SavingsAccount("Savings", (int) (Math.random() * 100000), ui);
+                    currentUser.userAccounts.add(savings);
+                    currentAccount = savings;
+                    return currentAccount;
+                default:
+                    System.out.println("Please choose (C) or (S)");
+            }
         }
-        return currentAccount;
     }
 
     public Account selectAccount(User currentUser) {

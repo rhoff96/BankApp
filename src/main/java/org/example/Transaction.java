@@ -21,7 +21,7 @@ public class Transaction {
                 System.out.printf("Your %s account has a balance of $0.\n", currentAccount.accountType);
                 ui.put("Please enter deposit amount: ");
                 BigDecimal bigCredit = ui.getBigDec();
-                currentAccount.deposit(bigCredit);
+                currentAccount.deposit(currentUser, bigCredit);
             }
             if (currentUser.userAccounts.size() == 1) {
                 ui.put("Would you like to (W)ithdraw funds, (D)eposit funds, (G)et balance, or (O)pen another account? ");
@@ -39,6 +39,7 @@ public class Transaction {
                 String response = ui.getAlpha();
                 if (response.equalsIgnoreCase("n")) {
                     isBanking = false;
+                    break;
                 } else if (response.equalsIgnoreCase("y")) {
                     break;
                 } else {
@@ -55,12 +56,12 @@ public class Transaction {
             case "w":
                 ui.put("Please enter withdrawal amount: ");
                 BigDecimal bigDebit = ui.getBigDec();
-                currentAccount.withdraw(bigDebit);
+                currentAccount.withdraw(currentUser, currentAccount, bigDebit);
                 break;
             case "d":
                 ui.put("Please enter deposit amount: ");
                 BigDecimal bigCredit = ui.getBigDec();
-                currentAccount.deposit(bigCredit);
+                currentAccount.deposit(currentUser, bigCredit);
                 break;
             case "g":
                 ui.put("Your current balance is $" + currentAccount.getBalance());

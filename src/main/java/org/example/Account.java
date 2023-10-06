@@ -21,7 +21,7 @@ public abstract class Account {
         return accountNumber;
     }
 
-    public BigDecimal withdraw(BigDecimal bd) {
+    public BigDecimal withdraw(User currentUser, Account currentAccount, BigDecimal bd) {
         if (bd.compareTo(BigDecimal.ZERO) < 0) {
             ui.put("Please enter a positive withdrawal amount");
             return this.getBalance();
@@ -35,6 +35,9 @@ public abstract class Account {
             this.balance = BigDecimal.ZERO;
             ui.put("Your current balance is $" + this.balance);
         }
+        BigDecimal withdrawal = tempBalance.subtract(this.getBalance());
+        String typeAmount = "Withdraw $"+withdrawal;
+        log.logEntry(currentUser, currentUser.currentAccount, typeAmount);
         return this.getBalance();
     }
 
@@ -55,13 +58,13 @@ public abstract class Account {
         }
         if (accountTo == null) {
             System.out.println("Account not found\n");
-            transfer(currentUser);
+            return;
         }
         ui.put("Please provide transfer amount: ");
         BigDecimal transferBig = ui.getBigDec();
         if (transferBig.compareTo(currentUser.currentAccount.balance) > 0) {
             ui.put("Amount must be less than current balance.");
-            transfer(currentUser);
+            return;
         }
         currentUser.currentAccount.balance = currentUser.currentAccount.balance.subtract(transferBig);
         for (Account account : currentUser.userAccounts) {
@@ -71,16 +74,19 @@ public abstract class Account {
         }
         ui.put("Transfer completed.");
         currentUser.getTotalBalance(currentUser);
-        log.logEntry(currentUser, currentUser.currentAccount);
+        String typeAmount = "Transfer $" + transferBig;
+        log.logEntry(currentUser, currentUser.currentAccount, typeAmount);
     }
 
-    public BigDecimal deposit(BigDecimal bd) {
+    public BigDecimal deposit(User currentUser, BigDecimal bd) {
         if (bd.compareTo(BigDecimal.ZERO) < 0) {
             ui.put("Please enter a positive deposit amount");
             return this.getBalance();
         }
         this.balance = balance.add(bd);
         System.out.println("Current balance is: $" + this.balance);
+        String typeAmount = "Deposit $"+bd;
+        log.logEntry(currentUser, currentUser.currentAccount, typeAmount);
         return this.balance;
     }
 
