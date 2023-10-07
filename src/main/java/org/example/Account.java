@@ -3,11 +3,11 @@ package org.example;
 import java.math.BigDecimal;
 
 public abstract class Account {
-    public String accountType;
+    private final String accountType;
     private final int accountNumber;
-    public BigDecimal balance;
+    private BigDecimal balance;
     private final UserInterface ui;
-    public Log log = new Log();
+    private final Log log = new Log();
 
 
     public Account(String accountType, int accountNumber, UserInterface ui) {
@@ -21,19 +21,27 @@ public abstract class Account {
         return accountNumber;
     }
 
+    public String getAccountType() {
+        return accountType;
+    }
+
+    public void setBalance(BigDecimal balance) {
+        this.balance = balance;
+    }
+
     public BigDecimal withdraw(User currentUser, Account currentAccount, BigDecimal bd) {
         if (bd.compareTo(BigDecimal.ZERO) < 0) {
             ui.put("Please enter a positive withdrawal amount");
             return this.getBalance();
         }
-        BigDecimal tempBalance = this.balance;
-        this.balance = this.balance.subtract(bd);
-        if (this.balance.compareTo(BigDecimal.ZERO) > 0) {
-            ui.put("Current balance is: $" + this.balance);
+        BigDecimal tempBalance = this.getBalance();
+        this.setBalance(this.balance.subtract(bd));
+        if (this.getBalance().compareTo(BigDecimal.ZERO) > 0) {
+            ui.put("Current balance is: $" + this.getBalance());
         } else {
             ui.put("Insufficient funds. Your account was debited the maximum allowed amount of $" + tempBalance);
-            this.balance = BigDecimal.ZERO;
-            ui.put("Your current balance is $" + this.balance);
+            this.setBalance(BigDecimal.ZERO);
+            ui.put("Your current balance is $" + this.getBalance());
         }
         BigDecimal withdrawal = tempBalance.subtract(this.getBalance());
         String typeAmount = "Withdraw $"+withdrawal;
@@ -62,14 +70,14 @@ public abstract class Account {
         }
         ui.put("Please provide transfer amount: ");
         BigDecimal transferBig = ui.getBigDec();
-        if (transferBig.compareTo(currentUser.currentAccount.balance) > 0) {
+        if (transferBig.compareTo(currentUser.currentAccount.getBalance()) > 0) {
             ui.put("Amount must be less than current balance.");
             return;
         }
-        currentUser.currentAccount.balance = currentUser.currentAccount.balance.subtract(transferBig);
+        currentUser.currentAccount.setBalance(currentUser.currentAccount.getBalance().subtract(transferBig));
         for (Account account : currentUser.userAccounts) {
             if (account.getAccountNumber() == acctNumToTransferTo) {
-                account.balance = account.balance.add(transferBig);
+                account.setBalance(account.getBalance().add(transferBig));
             }
         }
         ui.put("Transfer completed.");
@@ -83,11 +91,11 @@ public abstract class Account {
             ui.put("Please enter a positive deposit amount");
             return this.getBalance();
         }
-        this.balance = balance.add(bd);
-        System.out.println("Current balance is: $" + this.balance);
+        this.setBalance(this.getBalance().add(bd));
+        System.out.println("Current balance is: $" + this.getBalance());
         String typeAmount = "Deposit $"+bd;
         log.logEntry(currentUser, currentUser.currentAccount, typeAmount);
-        return this.balance;
+        return this.getBalance();
     }
 
     public BigDecimal getBalance() {

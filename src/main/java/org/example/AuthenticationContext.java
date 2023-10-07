@@ -16,6 +16,17 @@ public class AuthenticationContext {
     }
 
     public void welcome() {
+        printOpening();
+        //hard-coding a user to test functionality
+        namePasswords.put("Russell Hoffman","admin");
+        User ml = new User("Russell Hoffman","admin",ui);
+        ml.currentAccount = new CheckingAccount("Checking",123,ui);
+        String name = ui.getAlpha();
+        ui.put("Please enter your password: ");
+        String password = ui.get();
+        authenticate(name, password);
+    }
+    public void printOpening(){
         ui.put("Welcome to Tech Elevator Bank!\n");
         ui.put("===$$=================Bank Policies===================$$===\n");
         ui.put("1. Savings accounts must maintain a minimum balance of $100. Withdrawals below this balance will incur a $10 fee, as well as a monthly maintenance fee of $15.");
@@ -28,40 +39,13 @@ public class AuthenticationContext {
         ui.put("Tiers are calculated at the conclusion of each banking session.");
         ui.put("-------------------------------------------------------------");
         ui.put("Please log in by entering your 'Firstname Lastname': ");
-        //adding a user to test functionality
-        namePasswords.put("Russell Hoffman","admin");
-        User ml = new User("Russell Hoffman","admin",ui);
-        ml.currentAccount = new CheckingAccount("Checking",123,ui);
-        String name = ui.getAlpha();
-        ui.put("Please enter your password: ");
-        String password = ui.get();
-        authenticate(name, password);
     }
 
     public User authenticate(String name, String password) {
         if (namePasswords.isEmpty()) {
             createUser(name, password);
         } else {
-            for (String username : namePasswords.keySet()) {
-                if (username.equals(name) && namePasswords.get(name).equals(password)) {
-                    for (User user : userList) {
-                        if (user.getPassword().equals(password)) {
-                            currentUser = user;
-                            System.out.printf("Welcome back, %s. Your current Tier is %s.\n",
-                                    currentUser.getFirstName(), currentUser.getTier());
-                        }
-                    }
-                } else {
-                    ui.put("Access Denied. Username and Password do not match our records. " +
-                            "Please (T)ry again or (C)reate a new user profile: ");
-                    String choice = ui.getAlpha();
-                    if (choice.equalsIgnoreCase("T")) {
-                        welcome();
-                    } else if (choice.equalsIgnoreCase("C")) {
-                        createUser(name, password);
-                    }
-                }
-            }
+            findUser(name,password);
         }
         return currentUser;
     }
@@ -76,5 +60,27 @@ public class AuthenticationContext {
         userIsNew = true;
         currentUser.setTier(currentUser);
 
+    }
+    public void findUser(String name, String password){
+        for (String username : namePasswords.keySet()) {
+            if (username.equals(name) && namePasswords.get(name).equals(password)) {
+                for (User user : userList) {
+                    if (user.getPassword().equals(password)) {
+                        currentUser = user;
+                        System.out.printf("Welcome back, %s. Your current Tier is %s.\n",
+                                currentUser.getFirstName(), currentUser.getTier());
+                    }
+                }
+            } else {
+                ui.put("Access Denied. Username and Password do not match our records. " +
+                        "Please (T)ry again or (C)reate a new user profile: ");
+                String choice = ui.getAlpha();
+                if (choice.equalsIgnoreCase("T")) {
+                    welcome();
+                } else if (choice.equalsIgnoreCase("C")) {
+                    createUser(name, password);
+                }
+            }
+        }
     }
 }

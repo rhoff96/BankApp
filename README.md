@@ -1,4 +1,4 @@
-# Welcome to the CLI Banking App!
+# Welcome to the CLI Bank!
 
 This program is designed to simulate the operations of a typical banking app. Its features include authenticating users, adding multiple accounts and account types per user, and providing withdrawal, deposit, and transfer functionality.
 Additionally, it mimics some typical banking policies such as overdraft fees on transactions that fall below a minimum required balance, and a limit on the number of withdrawals per session from a savings account.
@@ -36,4 +36,4 @@ In addition to the concepts covered during these first weeks, I did additional r
 
 Please note that a few lines of sample user data are hard coded into the current program in order to test the functionality that depends on persistent data.
 
-I intend to build this program out further to store data in a database, and eventually create a front end beyond the CLI. Additional features that I hope to incorporate include transfers between users, creating unique savings account interest based on account balance tiers, and a social feed of transactions.
+I intend to build this program out further to store data in a database, and eventually create a front end beyond the CLI. Additional features that I hope to incorporate include transfers between users and assigning tiered savings account interest rates based on account balance tiers.

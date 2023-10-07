@@ -6,6 +6,7 @@ public class SavingsAccount extends Account {
     private final BigDecimal MINIMUM_BALANCE = new BigDecimal(100);
     private final BigDecimal OVERDRAFT_FEE = new BigDecimal(10);
     private int withdrawalCounter = 0;
+    private final Log log = new Log();
 
     public SavingsAccount(String accountType, int accountNumber, UserInterface ui) {
         super(accountType, accountNumber, ui);
@@ -32,7 +33,7 @@ public class SavingsAccount extends Account {
                 System.out.println("Withdrawals equal or greater than current balance are not allowed. Transaction failed");
                 return this.getBalance();
             } else {
-                this.balance = this.balance.subtract(bd.add(OVERDRAFT_FEE));
+                this.setBalance(this.getBalance().subtract(bd.add(OVERDRAFT_FEE)));
                 withdrawalCounter++;
                 System.out.println("Your balance fell below the minimum balance of $100 and is assessed a fee of $10.");
                 System.out.println("Your current balance is $" + this.getBalance());

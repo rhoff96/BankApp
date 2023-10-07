@@ -67,7 +67,7 @@ public class User {
     public Account selectAccount(User currentUser) {
         ui.put("Accounts available for banking: ");
         for (Account account : currentUser.userAccounts) {
-            ui.put(account.accountType + " #" + account.getAccountNumber());
+            ui.put(account.getAccountType() + " #" + account.getAccountNumber());
         }
         ui.put("Please enter an account number to access: ");
         int intSelection = ui.getInt();
@@ -82,7 +82,7 @@ public class User {
     public BigDecimal getTotalBalance(User currentUser) {
         BigDecimal totalBalance = BigDecimal.ZERO;
         for (Account account : currentUser.userAccounts) {
-            System.out.println(account.accountType + " #" + account.getAccountNumber() + ": $" + account.getBalance());
+            System.out.println(account.getAccountType() + " #" + account.getAccountNumber() + ": $" + account.getBalance());
             totalBalance = totalBalance.add(account.getBalance());
         }
         return totalBalance;
@@ -105,44 +105,43 @@ public class User {
         } else {
             currentUser.tier = Tier.Platinum;
         }
-        setInterestRate(currentUser);
+//        setInterestRate(currentUser);
     }
 
     public Tier getTier() {
         return tier;
     }
 
-    public BigDecimal setInterestRate(User currentUser) {
-        BigDecimal ir = null;
-        if (currentUser.tier == Tier.Bronze) {
-            ir = new BigDecimal(".02");
-        }
-        if (currentUser.tier == Tier.Silver) {
-            ir = new BigDecimal(".03");
-        }
-        if (currentUser.tier == Tier.Gold) {
-            ir = new BigDecimal(".04");
-        }
-        if (currentUser.tier == Tier.Platinum) {
-            ir = new BigDecimal(".05");
-        }
-        return ir;
-    }
+//    public BigDecimal setInterestRate(User currentUser) {
+//        BigDecimal ir = null;
+//        if (currentUser.tier == Tier.Bronze) {
+//            ir = new BigDecimal(".02");
+//        }
+//        if (currentUser.tier == Tier.Silver) {
+//            ir = new BigDecimal(".03");
+//        }
+//        if (currentUser.tier == Tier.Gold) {
+//            ir = new BigDecimal(".04");
+//        }
+//        if (currentUser.tier == Tier.Platinum) {
+//            ir = new BigDecimal(".05");
+//        }
+//        return ir;
+//    }
 
     @Override
     public boolean equals(Object obj) {
-        boolean isEqual = true;
         User other = (User) obj;
         if (!this.getClass().equals(other.getClass())) {
-            isEqual = false;
+            return false;
         }
         if (!this.getName().equals(other.getName())) {
-            isEqual = false;
+            return false;
         }
         if (!this.getPassword().equals(other.getPassword())) {
-            isEqual = false;
+            return false;
         }
-        return isEqual;
+        return true;
     }
 }
 

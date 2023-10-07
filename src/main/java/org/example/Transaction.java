@@ -18,7 +18,7 @@ public class Transaction {
     public void transact() {
         while (isBanking) {
             if (currentAccount.getBalance().compareTo(new BigDecimal(0)) == 0) {
-                System.out.printf("Your %s account has a balance of $0.\n", currentAccount.accountType);
+                System.out.printf("Your %s account has a balance of $0.\n", currentAccount.getAccountType());
                 ui.put("Please enter deposit amount: ");
                 BigDecimal bigCredit = ui.getBigDec();
                 currentAccount.deposit(currentUser, bigCredit);
@@ -32,23 +32,26 @@ public class Transaction {
             String choice = ui.getAlpha().toLowerCase();
 
             transactionAction(choice);
-
-            while (true) {
-                ui.put("Current account is " + currentUser.currentAccount.toString());
-                ui.put("Would you like to keep banking? (y/n)");
-                String response = ui.getAlpha();
-                if (response.equalsIgnoreCase("n")) {
-                    isBanking = false;
-                    break;
-                } else if (response.equalsIgnoreCase("y")) {
-                    break;
-                } else {
-                    ui.put("Please enter y or n.");
-                }
-            }
+            keepBanking();
         }
         currentUser.setTier(currentUser);
         ui.put("Banking session complete.");
+    }
+
+    public void keepBanking() {
+        while (true) {
+            ui.put("Current account is " + currentUser.currentAccount.toString());
+            ui.put("Would you like to keep banking? (y/n)");
+            String response = ui.getAlpha();
+            if (response.equalsIgnoreCase("n")) {
+                isBanking = false;
+                break;
+            } else if (response.equalsIgnoreCase("y")) {
+                break;
+            } else {
+                ui.put("Please enter y or n.");
+            }
+        }
     }
 
     public void transactionAction(String choice) {
