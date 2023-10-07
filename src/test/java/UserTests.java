@@ -14,7 +14,7 @@ public class UserTests {
     public void when_user_has_total_balance_1000_then_bronze() {
         u.currentAccount = a;
         u.userAccounts.add(a);
-        a.deposit(u, new BigDecimal("1000"));
+        a.deposit(new BigDecimal("1000"));
         u.setTier(u);
         User.Tier actual = u.getTier();
         User.Tier expected = User.Tier.Bronze;
@@ -25,7 +25,7 @@ public class UserTests {
     public void when_user_has_total_balance_7000_then_silver() {
         u.currentAccount = a;
         u.userAccounts.add(a);
-        a.deposit(u, new BigDecimal("7000"));
+        a.deposit(new BigDecimal("7000"));
         u.setTier(u);
         User.Tier actual = u.getTier();
         User.Tier expected = User.Tier.Silver;
@@ -37,7 +37,7 @@ public class UserTests {
     public void when_user_has_total_balance_12000_then_gold() {
         u.currentAccount = a;
         u.userAccounts.add(a);
-        a.deposit(u, new BigDecimal("12000"));
+        a.deposit(new BigDecimal("12000"));
         u.setTier(u);
         User.Tier actual = u.getTier();
         User.Tier expected = User.Tier.Gold;
@@ -49,7 +49,7 @@ public class UserTests {
     public void when_user_has_total_balance_30000_then_platinum() {
         u.currentAccount = a;
         u.userAccounts.add(a);
-        a.deposit(u, new BigDecimal("30000"));
+        a.deposit(new BigDecimal("30000"));
         u.setTier(u);
         User.Tier actual = u.getTier();
         User.Tier expected = User.Tier.Platinum;
@@ -61,7 +61,7 @@ public class UserTests {
     public void when_user_has_total_5000_then_silver() {
         u.currentAccount = a;
         u.userAccounts.add(a);
-        a.deposit(u, new BigDecimal("5000"));
+        a.deposit(new BigDecimal("5000"));
         u.setTier(u);
         User.Tier actual = u.getTier();
         User.Tier expected = User.Tier.Silver;
@@ -73,7 +73,7 @@ public class UserTests {
     public void when_user_has_total_10000_then_gold(){
         u.currentAccount = a;
         u.userAccounts.add(a);
-        a.deposit(u, new BigDecimal("10000"));
+        a.deposit(new BigDecimal("10000"));
         u.setTier(u);
         User.Tier actual = u.getTier();
         User.Tier expected = User.Tier.Gold;
@@ -87,7 +87,7 @@ public class UserTests {
         sa.setBalance(new BigDecimal("2500"));
         u.userAccounts.add(a);
         u.userAccounts.add(sa);
-        a.deposit(u, new BigDecimal("3000"));
+        a.deposit(new BigDecimal("3000"));
         u.setTier(u);
         User.Tier actual = u.getTier();
         User.Tier expected = User.Tier.Silver;
@@ -100,7 +100,7 @@ public class UserTests {
         Account sa = new SavingsAccount("Savings",235,ui);
         sa.setBalance(BigDecimal.ZERO);
         u.userAccounts.add(a);
-        a.deposit(u, new BigDecimal("12000"));
+        a.deposit(new BigDecimal("12000"));
         u.setTier(u);
         User.Tier actual = u.getTier();
         User.Tier expected = User.Tier.Gold;

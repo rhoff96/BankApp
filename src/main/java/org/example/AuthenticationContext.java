@@ -4,8 +4,8 @@ import java.util.*;
 
 public class AuthenticationContext {
 
-    final private Map<String, String> namePasswords = new HashMap<>();
-    final private List<User> userList = new ArrayList<>();
+    private final Map<String, String> namePasswords = new HashMap<>();
+    private final List<User> userList = new ArrayList<>();
     public User currentUser;
     public boolean userIsNew;
     private final UserInterface ui;

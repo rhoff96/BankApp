@@ -6,7 +6,6 @@ public class SavingsAccount extends Account {
     private final BigDecimal MINIMUM_BALANCE = new BigDecimal(100);
     private final BigDecimal OVERDRAFT_FEE = new BigDecimal(10);
     private int withdrawalCounter = 0;
-    private final Log log = new Log();
 
     public SavingsAccount(String accountType, int accountNumber, UserInterface ui) {
         super(accountType, accountNumber, ui);
@@ -16,12 +15,7 @@ public class SavingsAccount extends Account {
     }
 
     @Override
-    public BigDecimal withdraw(User currentUser, Account currentAccount, BigDecimal bd) {
-        BigDecimal tempBalance = currentUser.currentAccount.getBalance();
-        if (bd.compareTo(BigDecimal.ZERO) < 0){
-            System.out.println("Please enter a positive withdrawal amount");
-            return this.getBalance();
-        }
+    public BigDecimal withdraw(BigDecimal bd) {
         final int SAVINGS_WITHDRAWAL_MAX = 2;
         if (withdrawalCounter == SAVINGS_WITHDRAWAL_MAX) {
             System.out.println("You have reached the maximum number of allowed withdrawals per session from a savings account.");
@@ -40,13 +34,11 @@ public class SavingsAccount extends Account {
                 System.out.printf("You have %d remaining withdrawals today. ", SAVINGS_WITHDRAWAL_MAX - withdrawalCounter);
             }
         } else {
-            super.withdraw(currentUser, currentUser.currentAccount, bd);
+            super.withdraw(bd);
             withdrawalCounter++;
             System.out.printf("You have %d remaining withdrawals today. ", SAVINGS_WITHDRAWAL_MAX - withdrawalCounter);
 
         }
-        String typeAmount = "Withdrawal $"+ (tempBalance.subtract(this.getBalance()));
-        log.logEntry(currentUser, currentUser.currentAccount, typeAmount);
         return this.getBalance();
     }
 }

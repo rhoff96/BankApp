@@ -13,9 +13,9 @@ public class BankingApp {
         currentUser = authenticationContext.currentUser;
 
         if (authenticationContext.userIsNew) {
-            currentAccount = authenticationContext.currentUser.createAccount(currentUser);
+            currentAccount = currentUser.createAccount(currentUser);
         } else {
-            currentAccount = authenticationContext.currentUser.selectAccount(currentUser);
+            currentAccount = currentUser.selectAccount(currentUser);
         }
 
         Transaction transact = new Transaction(currentUser, currentAccount, ui);

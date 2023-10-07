@@ -19,10 +19,6 @@ public class UserInterface {
 
     public String getAlpha() {
         String response = userInput.nextLine();
-        while (response.equals("")) {
-            System.out.println("Please enter word(s).");
-            response = userInput.nextLine();
-        }
         while (!Pattern.compile("[a-zA-Z\\s]*").matcher(response).matches()) {
             System.out.println("Please input only letters A-Z.");
             response = userInput.nextLine();
@@ -44,12 +40,8 @@ public class UserInterface {
     }
     public BigDecimal getBigDec() {
         String response = userInput.nextLine();
-        while (response.equals("")) {
-            System.out.println("Please enter a numerical value");
-            response = userInput.nextLine();
-        }
-        while (Pattern.compile("[a-zA-Z\\s]*").matcher(response).matches()) {
-            System.out.println("Please enter a numerical value");
+        while (!Pattern.compile("^[1-9]+\\.[1-9]\\d*$").matcher(response).matches()) {
+            System.out.println("Please enter a positive numerical value");
             response = userInput.nextLine();
         }
         return new BigDecimal(response);

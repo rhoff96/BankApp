@@ -7,6 +7,8 @@ public class Transaction {
     public Account currentAccount;
     private boolean isBanking = true;
     private final UserInterface ui;
+    private final Log log = new Log();
+
 
     public Transaction(User currentUser, Account currentAccount, UserInterface ui) {
         this.currentAccount = currentAccount;
@@ -21,7 +23,7 @@ public class Transaction {
                 System.out.printf("Your %s account has a balance of $0.\n", currentAccount.getAccountType());
                 ui.put("Please enter deposit amount: ");
                 BigDecimal bigCredit = ui.getBigDec();
-                currentAccount.deposit(currentUser, bigCredit);
+                currentAccount.deposit(bigCredit);
             }
             if (currentUser.userAccounts.size() == 1) {
                 ui.put("Would you like to (W)ithdraw funds, (D)eposit funds, (G)et balance, or (O)pen another account? ");
@@ -55,22 +57,38 @@ public class Transaction {
     }
 
     public void transactionAction(String choice) {
+        String typeAmount = "";
         switch (choice) {
             case "w":
                 ui.put("Please enter withdrawal amount: ");
                 BigDecimal bigDebit = ui.getBigDec();
-                currentAccount.withdraw(currentUser, currentAccount, bigDebit);
+                BigDecimal tempBalance = currentAccount.getBalance();
+                currentAccount.withdraw(bigDebit);
+                BigDecimal withdrawal = tempBalance.subtract(currentAccount.getBalance());
+                typeAmount = "Withdraw $" + withdrawal;
                 break;
             case "d":
                 ui.put("Please enter deposit amount: ");
                 BigDecimal bigCredit = ui.getBigDec();
-                currentAccount.deposit(currentUser, bigCredit);
+                currentAccount.deposit(bigCredit);
+                typeAmount = "Deposit $" + bigCredit;
                 break;
             case "g":
                 ui.put("Your current balance is $" + currentAccount.getBalance());
                 break;
             case "t":
-                currentAccount.transfer(currentUser);
+                ui.put("Please provide transfer amount: ");
+                BigDecimal transferBig = ui.getBigDec();
+                if (transferBig.compareTo(currentUser.currentAccount.getBalance()) > 0) {
+                    ui.put("Amount must be less than current balance.");
+                    return;
+                }
+                Account accountTo = currentAccount.pickTransferAccount(currentUser);
+                boolean enoughFunds = currentAccount.transfer(currentUser, accountTo, transferBig);
+                if (!enoughFunds) return;
+                ui.put("Transfer completed");
+                typeAmount = "Transfer $" + transferBig;
+                log.logEntry(currentUser,accountTo,typeAmount);
                 break;
             case "o":
                 currentAccount = currentUser.createAccount(currentUser);
@@ -85,6 +103,7 @@ public class Transaction {
                 ui.put("Please select an option from the list.");
                 transact();
         }
+        log.logEntry(currentUser, currentUser.currentAccount, typeAmount);
     }
 }
 

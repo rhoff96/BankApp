@@ -18,17 +18,8 @@ public class AccountTests {
         acc.setBalance(new BigDecimal("150"));
         BigDecimal bd = new BigDecimal("200");
         BigDecimal expected = new BigDecimal("0");
-        BigDecimal actual = acc.withdraw(currentUser, acc, bd);
+        BigDecimal actual = acc.withdraw(bd);
         Assert.assertEquals("Withdraw greater than current balance should return 0 balance", expected, actual);
-    }
-
-    @Test
-    public void when_withdraw_negative_then_error_trans_fails() {
-        acc.setBalance(new BigDecimal("250"));
-        BigDecimal bd = new BigDecimal("-10");
-        BigDecimal expected = new BigDecimal("250");
-        BigDecimal actual = acc.withdraw(currentUser, acc, bd);
-        Assert.assertEquals("Negative withdrawals are not allowed.", expected, actual);
     }
 
     @Test
@@ -38,7 +29,7 @@ public class AccountTests {
         sa.setBalance(new BigDecimal("150"));
         BigDecimal bd = new BigDecimal("75");
         BigDecimal expected = new BigDecimal("65");
-        BigDecimal actual = sa.withdraw(currentUser, acc, bd);
+        BigDecimal actual = sa.withdraw(bd);
         Assert.assertEquals("Withdraw from savings below minimum balance incurs $10 fee", expected, actual);
     }
 
@@ -47,11 +38,11 @@ public class AccountTests {
         currentUser.currentAccount = sa;
         currentUser.userAccounts.add(sa);
         sa.setBalance(new BigDecimal("200"));
-        sa.withdraw(currentUser, sa, new BigDecimal("30"));
-        sa.withdraw(currentUser, sa, new BigDecimal("20"));
-        sa.withdraw(currentUser, sa, new BigDecimal("10"));
+        sa.withdraw(new BigDecimal("30"));
+        sa.withdraw(new BigDecimal("20"));
+        sa.withdraw(new BigDecimal("10"));
         BigDecimal expected = new BigDecimal("150");
-        BigDecimal actual = (sa.withdraw(currentUser, sa, new BigDecimal("30")));
+        BigDecimal actual = (sa.withdraw(new BigDecimal("30")));
         Assert.assertEquals("More than two withdrawals from a savings account per session are not allowed", expected, actual);
     }
 
@@ -62,7 +53,7 @@ public class AccountTests {
         sa.setBalance(new BigDecimal("150"));
         BigDecimal bd = new BigDecimal("50");
         BigDecimal expected = new BigDecimal("100");
-        BigDecimal actual = sa.withdraw(currentUser, currentUser.currentAccount, bd);
+        BigDecimal actual = sa.withdraw(bd);
         Assert.assertEquals("Withdraw from savings resulting in minimum balance should not incur a $10 fee", expected, actual);
     }
 
@@ -74,7 +65,7 @@ public class AccountTests {
         sa.setBalance(new BigDecimal("150"));
         BigDecimal bd = new BigDecimal("200");
         BigDecimal expected = sa.getBalance();
-        BigDecimal actual = sa.withdraw(currentUser, currentUser.currentAccount, bd);
+        BigDecimal actual = sa.withdraw(bd);
         Assert.assertEquals("Withdraw from savings greater than current balance should fail and return current balance", expected, actual);
     }
 
@@ -83,7 +74,7 @@ public class AccountTests {
         currentUser.currentAccount = acc;
         currentUser.userAccounts.add(acc);
         BigDecimal bd = new BigDecimal("25");
-        BigDecimal actual = acc.deposit(currentUser, bd);
+        BigDecimal actual = acc.deposit(bd);
         BigDecimal expected = new BigDecimal("25");
         Assert.assertEquals("Deposit to empty account should return correct addition", expected, actual);
     }
@@ -95,21 +86,40 @@ public class AccountTests {
         acc.setBalance(new BigDecimal("50"));
         BigDecimal bd = new BigDecimal("25");
         BigDecimal expected = new BigDecimal("75");
-        BigDecimal actual = acc.deposit(currentUser, bd);
+        BigDecimal actual = acc.deposit(bd);
         Assert.assertEquals("Deposit to empty account should return correct addition", expected, actual);
     }
 
     @Test
-    public void when_deposit_negative_return_transaction_fail() {
-        acc.setBalance(new BigDecimal("200"));
-        BigDecimal bd = new BigDecimal("-20");
-        BigDecimal expected = new BigDecimal("200");
-        BigDecimal actual = acc.deposit(currentUser, bd);
-        Assert.assertEquals("Negative deposits are not allowed.", expected, actual);
-    }
+    public void when_transfer_return_correct_amounts() {
+        currentUser.currentAccount = acc;
+        currentUser.userAccounts.add(acc);
+        currentUser.userAccounts.add(sa);
+        acc.setBalance(new BigDecimal("500"));
+        sa.setBalance(new BigDecimal("150"));
+        acc.transfer(currentUser,sa,new BigDecimal("25"));
+        BigDecimal actualChecking = acc.getBalance();
+        BigDecimal expectedChecking = new BigDecimal("475");
+        BigDecimal actualSavings = sa.getBalance();
+        BigDecimal expectedSavings = new BigDecimal("175");
+        Assert.assertEquals("Checking balance should be correct",expectedChecking,actualChecking);
+        Assert.assertEquals("Savings balance should be correct", expectedSavings,actualSavings);
 
-//    @Test
-//    public void when_transfer_less_than_balance_return_correct_amounts() {
-//
-//    }
+    }
+    @Test
+    public void when_transfer_more_than_account_balance_return(){
+        currentUser.currentAccount = acc;
+        currentUser.userAccounts.add(acc);
+        currentUser.userAccounts.add(sa);
+        acc.setBalance(new BigDecimal("200"));
+        sa.setBalance(new BigDecimal("150"));
+        acc.transfer(currentUser,sa,new BigDecimal("300"));
+        BigDecimal actualChecking = acc.getBalance();
+        BigDecimal expectedChecking = new BigDecimal("200");
+        BigDecimal actualSavings = sa.getBalance();
+        BigDecimal expectedSavings = new BigDecimal("150");
+        Assert.assertEquals("Checking balance should be correct",expectedChecking,actualChecking);
+        Assert.assertEquals("Savings balance should be correct", expectedSavings,actualSavings);
+
+    }
 }
