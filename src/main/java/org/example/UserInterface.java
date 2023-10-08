@@ -40,7 +40,7 @@ public class UserInterface {
     }
     public BigDecimal getBigDec() {
         String response = userInput.nextLine();
-        while (!Pattern.compile("^[1-9]+\\.[1-9]\\d*$").matcher(response).matches()) {
+        while (!Pattern.compile("^[+]?\\d+([.]\\d+)?$").matcher(response).matches()) {
             System.out.println("Please enter a positive numerical value");
             response = userInput.nextLine();
         }

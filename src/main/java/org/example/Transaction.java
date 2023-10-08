@@ -24,6 +24,8 @@ public class Transaction {
                 ui.put("Please enter deposit amount: ");
                 BigDecimal bigCredit = ui.getBigDec();
                 currentAccount.deposit(bigCredit);
+                String typeAmount = "Initial Deposit $"+bigCredit;
+                log.logEntry(currentUser,currentAccount,typeAmount);
             }
             if (currentUser.userAccounts.size() == 1) {
                 ui.put("Would you like to (W)ithdraw funds, (D)eposit funds, (G)et balance, or (O)pen another account? ");
@@ -71,11 +73,12 @@ public class Transaction {
                 ui.put("Please enter deposit amount: ");
                 BigDecimal bigCredit = ui.getBigDec();
                 currentAccount.deposit(bigCredit);
+                ui.put("Current balance is $"+currentAccount.getBalance());
                 typeAmount = "Deposit $" + bigCredit;
                 break;
             case "g":
                 ui.put("Your current balance is $" + currentAccount.getBalance());
-                break;
+                return;
             case "t":
                 ui.put("Please provide transfer amount: ");
                 BigDecimal transferBig = ui.getBigDec();
@@ -84,21 +87,25 @@ public class Transaction {
                     return;
                 }
                 Account accountTo = currentAccount.pickTransferAccount(currentUser);
+                if (accountTo == null) {
+                    return;
+                }
                 boolean enoughFunds = currentAccount.transfer(currentUser, accountTo, transferBig);
                 if (!enoughFunds) return;
-                ui.put("Transfer completed");
+                String typeAmountFrom = "Transfer -$" + transferBig;
                 typeAmount = "Transfer $" + transferBig;
-                log.logEntry(currentUser,accountTo,typeAmount);
-                break;
+                log.logEntry(currentUser, currentAccount, typeAmountFrom);
+                log.logEntry(currentUser, accountTo, typeAmount);
+                return;
             case "o":
                 currentAccount = currentUser.createAccount(currentUser);
-                break;
+                return;
             case "l":
                 ui.put("Total Balance: $ " + currentUser.getTotalBalance(currentUser));
-                break;
+                return;
             case "s":
                 currentUser.selectAccount(currentUser);
-                break;
+                return;
             default:
                 ui.put("Please select an option from the list.");
                 transact();

@@ -10,3 +10,7 @@ TestUser: Account #123 Deposit $50 Current Balance $200
 TestUser: Account #123 Deposit $50 Current Balance $200
 TestUser: Account #123 Deposit $50 Current Balance $200
 TestUser: Account #123 Deposit $50 Current Balance $200
+TestUser: Account #123 Deposit $50 Current Balance $200
+TestUserChecking: Account #123 Deposit $50 Current Balance $200
+TestUser: Checking Account #123 Deposit $50 Current Balance $200
+TestUser: Checking Account #123 Deposit $50 Current Balance $200

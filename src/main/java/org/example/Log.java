@@ -28,7 +28,7 @@ public class Log {
 
         try (FileOutputStream fos = new FileOutputStream(f, true);
              PrintWriter writer = new PrintWriter(fos)) {
-            writer.println(currentUser.getName() + ": Account #" + currentAccount.getAccountNumber()
+            writer.println(currentUser.getName() +": " +currentAccount.getAccountType() +" Account #" + currentAccount.getAccountNumber()
                     + " " + typeAmount + " Current Balance $" + currentAccount.getBalance());
         } catch (IOException e) {
             System.out.println("Error" + e.getMessage());

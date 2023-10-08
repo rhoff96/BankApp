@@ -20,7 +20,7 @@ public class LogTests {
         acc.setBalance(new BigDecimal("150"));
         acc.deposit(new BigDecimal("50"));
         log.logEntry("test.txt", currentUser, acc, "Deposit $50");
-        String expected = "TestUser: Account #123 Deposit $50 Current Balance $200";
+        String expected = "TestUser: Checking Account #123 Deposit $50 Current Balance $200";
         String actual = "";
         File sourceFile = new File("test.txt");
         try {

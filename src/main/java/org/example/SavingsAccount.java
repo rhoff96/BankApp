@@ -28,17 +28,16 @@ public class SavingsAccount extends Account {
                 return this.getBalance();
             } else {
                 this.setBalance(this.getBalance().subtract(bd.add(OVERDRAFT_FEE)));
-                withdrawalCounter++;
                 System.out.println("Your balance fell below the minimum balance of $100 and is assessed a fee of $10.");
                 System.out.println("Your current balance is $" + this.getBalance());
-                System.out.printf("You have %d remaining withdrawals today. ", SAVINGS_WITHDRAWAL_MAX - withdrawalCounter);
             }
         } else {
             super.withdraw(bd);
-            withdrawalCounter++;
-            System.out.printf("You have %d remaining withdrawals today. ", SAVINGS_WITHDRAWAL_MAX - withdrawalCounter);
 
         }
+        withdrawalCounter++;
+        System.out.printf("You have %d remaining withdrawals today. ", SAVINGS_WITHDRAWAL_MAX - withdrawalCounter);
+
         return this.getBalance();
     }
 }

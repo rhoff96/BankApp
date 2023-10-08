@@ -1,28 +1,8 @@
-05-10-2023 08:06:40 PMTest Tester: Account #70586 Current Balance $432.66
-05-10-2023 08:18:53 PM Test Tester: Account #53967 Current Balance $140.65
-05-10-2023 08:19:00 PM Test Tester: Account #53967 Current Balance $120.65
-05-10-2023 08:19:28 PM Test Tester: Account #28996 Current Balance $300
-05-10-2023 08:19:41 PM Test Tester: Account #28996 Current Balance $214.80
-05-10-2023 08:20:07 PM Test Tester: Account #53967 Current Balance $205.85
-
-07-10-2023 09:24:33 AM Hello World: Account #72046  Current Balance $500
-10-07-2023 09:28:15 AM Hello World: Account #62187 Deposit $45 Current Balance $495
-10-07-2023 09:28:58 AM Test Tester: Account #67050 Deposit $10 Current Balance $460
-10-07-2023 04:09:40 PM Test TEst: Account #17725 Deposit $500 Current Balance $1500
-10-07-2023 04:27:03 PM Test Test: Account #36757  Current Balance $0
-10-07-2023 04:27:26 PM Test Test: Account #36757 Transfer $50 Current Balance $184
-10-07-2023 04:27:26 PM Test Test: Account #36757  Current Balance $184
-10-07-2023 04:30:00 PM Test Tester: Account #23443  Current Balance $0
-10-07-2023 04:30:16 PM Test Tester: Account #34133 Transfer $23 Current Balance $146
-10-07-2023 04:30:16 PM Test Tester: Account #23443 Transfer $23 Current Balance $477
-10-07-2023 04:30:16 PM Test Tester: Account #23443  Current Balance $477
-10-07-2023 04:36:22 PM Test Testeragain: Account #47090  Current Balance $0
-10-07-2023 04:38:14 PM Test tEst: Account #54279  Current Balance $0
-10-07-2023 04:41:15 PM Test tEst: Account #31500  Current Balance $0
-10-07-2023 04:41:26 PM Test tEst: Account #48156 Transfer $35 Current Balance $1035
-10-07-2023 04:41:26 PM Test tEst: Account #31500 Transfer $35 Current Balance $465
-10-07-2023 04:41:26 PM Test tEst: Account #48156 Transfer $35 Current Balance $1035
-10-07-2023 04:41:26 PM Test tEst: Account #31500 Transfer $35 Current Balance $465
-10-07-2023 04:43:10 PM Hello hello: Account #2231  Current Balance $0
-10-07-2023 04:43:24 PM Hello hello: Account #80709 Transfer $35 Current Balance $175
-10-07-2023 04:43:24 PM Hello hello: Account #2231 Transfer $35 Current Balance $365
+10-08-2023 11:29:55 AM Test TEst: Account #44665 Initial Deposit $140 Current Balance $140
+10-08-2023 11:30:01 AM Test TEst: Account #45671 Initial Deposit $200 Current Balance $200
+10-08-2023 11:30:14 AM Test TEst: Account #45671 Transfer -$60 Current Balance $140
+10-08-2023 11:30:14 AM Test TEst: Account #44665 Transfer $60 Current Balance $200
+10-08-2023 11:32:51 AM Hello Hello: Account #72093 Initial Deposit $200 Current Balance $200
+10-08-2023 11:32:56 AM Hello Hello: Account #52454 Initial Deposit $300 Current Balance $300
+10-08-2023 11:33:04 AM Hello Hello: Account #52454 Transfer -$50 Current Balance $250
+10-08-2023 11:33:04 AM Hello Hello: Account #72093 Transfer $50 Current Balance $250
