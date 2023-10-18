@@ -5,12 +5,11 @@ public class BankingApp {
 
     public void run() {
         Account currentAccount;
-        User currentUser;
         UserInterface ui = new UserInterface();
 
         AuthenticationContext authenticationContext = new AuthenticationContext(ui);
         authenticationContext.welcome();
-        currentUser = authenticationContext.currentUser;
+        User currentUser = authenticationContext.currentUser;
 
         if (authenticationContext.userIsNew) {
             currentAccount = currentUser.createAccount(currentUser);

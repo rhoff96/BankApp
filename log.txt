@@ -6,3 +6,7 @@
 10-08-2023 11:32:56 AM Hello Hello: Account #52454 Initial Deposit $300 Current Balance $300
 10-08-2023 11:33:04 AM Hello Hello: Account #52454 Transfer -$50 Current Balance $250
 10-08-2023 11:33:04 AM Hello Hello: Account #72093 Transfer $50 Current Balance $250
+10-17-2023 05:30:57 PM hello hello: Account #89484 Initial Deposit $100 Current Balance $100
+10-17-2023 05:31:06 PM hello hello: Account #6645 Initial Deposit $150 Current Balance $150
+10-17-2023 05:31:14 PM hello hello: Account #6645 Transfer -$35 Current Balance $115
+10-17-2023 05:31:14 PM hello hello: Account #89484 Transfer $35 Current Balance $135

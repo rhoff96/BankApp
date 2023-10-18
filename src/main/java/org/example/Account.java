@@ -7,8 +7,6 @@ public abstract class Account {
     private final int accountNumber;
     private BigDecimal balance;
     private final UserInterface ui;
-    private final Log log = new Log();
-
 
     public Account(String accountType, int accountNumber, UserInterface ui) {
         this.accountType = accountType;

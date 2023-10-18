@@ -6,8 +6,8 @@ public class AuthenticationContext {
 
     private final Map<String, String> namePasswords = new HashMap<>();
     private final List<User> userList = new ArrayList<>();
-    public User currentUser;
-    public boolean userIsNew;
+    protected User currentUser;
+    protected boolean userIsNew;
     private final UserInterface ui;
 
 
@@ -43,14 +43,13 @@ public class AuthenticationContext {
 
     public User authenticate(String name, String password) {
         if (namePasswords.isEmpty()) {
-            createUser(name, password);
+            return createUser(name, password);
         } else {
-            findUser(name,password);
+            return findUser(name,password);
         }
-        return currentUser;
     }
 
-    public void createUser(String name, String password) {
+    public User createUser(String name, String password) {
         User user = new User(name, password, ui);
         currentUser = user;
         user.setPassword(password);
@@ -59,18 +58,13 @@ public class AuthenticationContext {
         namePasswords.put(name, password);
         userIsNew = true;
         currentUser.setTier(currentUser);
+        return currentUser;
 
     }
-    public void findUser(String name, String password){
+    public User findUser(String name, String password){
         for (String username : namePasswords.keySet()) {
             if (username.equals(name) && namePasswords.get(name).equals(password)) {
-                for (User user : userList) {
-                    if (user.getPassword().equals(password)) {
-                        currentUser = user;
-                        System.out.printf("Welcome back, %s. Your current Tier is %s.\n",
-                                currentUser.getFirstName(), currentUser.getTier());
-                    }
-                }
+                assignUser(password);
             } else {
                 ui.put("Access Denied. Username and Password do not match our records. " +
                         "Please (T)ry again or (C)reate a new user profile: ");
@@ -80,6 +74,17 @@ public class AuthenticationContext {
                 } else if (choice.equalsIgnoreCase("C")) {
                     createUser(name, password);
                 }
+            }
+        }
+        return currentUser;
+    }
+
+    private void assignUser(String password) {
+        for (User user : userList) {
+            if (user.getPassword().equals(password)) {
+                currentUser = user;
+                System.out.printf("Welcome back, %s. Your current Tier is %s.\n",
+                        currentUser.getFirstName(), currentUser.getTier());
             }
         }
     }
