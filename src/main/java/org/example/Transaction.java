@@ -3,8 +3,8 @@ package org.example;
 import java.math.BigDecimal;
 
 public class Transaction {
-    public User currentUser;
-    public Account currentAccount;
+    private User currentUser;
+    private Account currentAccount;
     private boolean isBanking = true;
     private final UserInterface ui;
     private final Log log = new Log();
@@ -16,7 +16,6 @@ public class Transaction {
         this.ui = ui;
     }
 
-
     public void transact() {
         while (isBanking) {
             if (currentAccount.getBalance().compareTo(new BigDecimal(0)) == 0) {
@@ -24,8 +23,8 @@ public class Transaction {
                 ui.put("Please enter deposit amount: ");
                 BigDecimal bigCredit = ui.getBigDec();
                 currentAccount.deposit(bigCredit);
-                String typeAmount = "Initial Deposit $"+bigCredit;
-                log.logEntry(currentUser,currentAccount,typeAmount);
+                String typeAmount = "Initial Deposit $" + bigCredit;
+                log.logEntry(currentUser, currentAccount, typeAmount);
             }
             if (currentUser.userAccounts.size() == 1) {
                 ui.put("Would you like to (W)ithdraw funds, (D)eposit funds, (G)et balance, or (O)pen another account? ");
@@ -38,7 +37,7 @@ public class Transaction {
             transactionAction(choice);
             keepBanking();
         }
-        currentUser.setTier(currentUser);
+ //       currentUser.setTier();
         ui.put("Banking session complete.");
     }
 
@@ -73,7 +72,7 @@ public class Transaction {
                 ui.put("Please enter deposit amount: ");
                 BigDecimal bigCredit = ui.getBigDec();
                 currentAccount.deposit(bigCredit);
-                ui.put("Current balance is $"+currentAccount.getBalance());
+                ui.put("Current balance is $" + currentAccount.getBalance());
                 typeAmount = "Deposit $" + bigCredit;
                 break;
             case "g":
@@ -98,13 +97,13 @@ public class Transaction {
                 log.logEntry(currentUser, accountTo, typeAmount);
                 return;
             case "o":
-                currentAccount = currentUser.createAccount(currentUser);
+ //               currentAccount = currentUser.createAccount();
                 return;
             case "l":
-                ui.put("Total Balance: $ " + currentUser.getTotalBalance(currentUser));
+                ui.put("Total Balance: $ " + currentUser.getTotalBalance());
                 return;
             case "s":
-                currentUser.selectAccount(currentUser);
+                currentUser.selectAccount();
                 return;
             default:
                 ui.put("Please select an option from the list.");

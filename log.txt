@@ -10,3 +10,5 @@
 10-17-2023 05:31:06 PM hello hello: Account #6645 Initial Deposit $150 Current Balance $150
 10-17-2023 05:31:14 PM hello hello: Account #6645 Transfer -$35 Current Balance $115
 10-17-2023 05:31:14 PM hello hello: Account #89484 Transfer $35 Current Balance $135
+10-22-2023 03:54:56 PM Russell Hoffman: Account #123 Initial Deposit $10 Current Balance $10
+10-22-2023 08:06:53 PM Russell Hoffman: Account #23715 Initial Deposit $100 Current Balance $100

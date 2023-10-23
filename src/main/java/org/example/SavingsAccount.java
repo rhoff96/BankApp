@@ -7,8 +7,8 @@ public class SavingsAccount extends Account {
     private final BigDecimal OVERDRAFT_FEE = new BigDecimal(10);
     private int withdrawalCounter = 0;
 
-    public SavingsAccount(String accountType, int accountNumber, UserInterface ui) {
-        super(accountType, accountNumber, ui);
+    public SavingsAccount(String accountType, int customer_id) {
+        super(accountType, customer_id);
     }
     public void accrueInterest(User currentUser){
         //work in progress

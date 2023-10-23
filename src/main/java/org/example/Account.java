@@ -2,17 +2,16 @@ package org.example;
 
 import java.math.BigDecimal;
 
-public abstract class Account {
+public class Account {
     private final String accountType;
-    private final int accountNumber;
+    private int accountNumber;
+    private int customerId;
     private BigDecimal balance;
-    private final UserInterface ui;
+    private UserInterface ui;
 
-    public Account(String accountType, int accountNumber, UserInterface ui) {
+    public Account(String accountType, int customerId) {
         this.accountType = accountType;
-        this.accountNumber = accountNumber;
-        this.balance = BigDecimal.ZERO;
-        this.ui = ui;
+        this.customerId = customerId;
     }
 
     public int getAccountNumber() {

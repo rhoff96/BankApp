@@ -7,8 +7,8 @@ import java.math.BigDecimal;
 public class AccountTests {
     private final UserInterface ui = new UserInterface();
     private final User currentUser = new User("TestUser", "admin", ui);
-    private final CheckingAccount acc = new CheckingAccount("Checking", 123, ui);
-    private final SavingsAccount sa = new SavingsAccount("Savings", 123, ui);
+    private final CheckingAccount acc = new CheckingAccount("Checking", 123);
+    private final SavingsAccount sa = new SavingsAccount("Savings", 123);
 
 
     @Test

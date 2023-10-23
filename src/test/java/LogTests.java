@@ -10,7 +10,7 @@ import java.util.Scanner;
 public class LogTests {
     private final UserInterface ui = new UserInterface();
     private final User currentUser = new User("TestUser", "admin", ui);
-    private final CheckingAccount acc = new CheckingAccount("Checking", 123, ui);
+    private final CheckingAccount acc = new CheckingAccount("Checking", 123);
     private final Log log = new Log();
 
     @Test
