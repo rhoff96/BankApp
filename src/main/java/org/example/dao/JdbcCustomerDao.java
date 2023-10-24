@@ -70,21 +70,6 @@ public class JdbcCustomerDao implements CustomerDao {
         return totalBalance;
     }
 
-    public BigDecimal getAccountBalanceByAccountNumber(int accountNumber) {
-        BigDecimal accountBalance = null;
-        final String sql = "SELECT SUM(previous_balance + amount) AS account_balance \n" +
-                "FROM transaction\n" +
-                "WHERE account_number = ?;";
-        try {
-            SqlRowSet results = jdbcTemplate.queryForRowSet(sql, accountNumber);
-            accountBalance = results.getBigDecimal("account_balance");
-
-        } catch (CannotGetJdbcConnectionException e) {
-            throw new DaoException("Unable to connect to server or database");
-        }
-        return accountBalance;
-    }
-
     @Override
     public Customer createCustomer(Customer customer) {
         Customer newCustomer = null;

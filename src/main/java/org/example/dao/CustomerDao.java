@@ -63,13 +63,6 @@ public interface CustomerDao {
     BigDecimal getTotalBalanceByCustomerId(int customerId);
 
     /**
-     * @param accountNumber
-     * @return account balance
-     * @throws DaoException if an error occurs
-     */
-    BigDecimal getAccountBalanceByAccountNumber(int accountNumber);
-
-    /**
      * @param name and password of customer
      * @return customer object
      * @throws DaoException if an error occurs

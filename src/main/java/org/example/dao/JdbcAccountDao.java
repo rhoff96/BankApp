@@ -1,7 +1,6 @@
 package org.example.dao;
 
 import org.apache.commons.dbcp2.BasicDataSource;
-import org.example.CheckingAccount;
 import org.example.exception.DaoException;
 import org.example.model.Account;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -9,7 +8,7 @@ import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 
-import javax.sql.DataSource;
+import java.math.BigDecimal;
 
 public class JdbcAccountDao implements AccountDao {
     private final JdbcTemplate jdbcTemplate;
@@ -39,6 +38,20 @@ public class JdbcAccountDao implements AccountDao {
             throw new DaoException("Unable to connect to server or database");
         }
         return account;
+    }
+    public BigDecimal getAccountBalanceByAccountNumber(int accountNumber) {
+        BigDecimal accountBalance = null;
+        final String sql = "SELECT SUM(previous_balance + amount) AS account_balance \n" +
+                "FROM transaction\n" +
+                "WHERE account_number = ?;";
+        try {
+            SqlRowSet results = jdbcTemplate.queryForRowSet(sql, accountNumber);
+            accountBalance = results.getBigDecimal("account_balance");
+
+        } catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database");
+        }
+        return accountBalance;
     }
 
     @Override

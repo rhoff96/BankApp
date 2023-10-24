@@ -1,9 +1,6 @@
 package org.example.model;
 
-import org.example.CheckingAccount;
-import org.example.dao.AccountDao;
 import org.example.dao.CustomerDao;
-import org.example.dao.JdbcAccountDao;
 import org.example.dao.JdbcCustomerDao;
 import java.math.BigDecimal;
 
@@ -13,8 +10,6 @@ public class Customer {
     private String password;
     private Tier tier;
     private final CustomerDao customerDao = new JdbcCustomerDao();
-    private final AccountDao accountDao = new JdbcAccountDao();
-
     public Customer() {
     }
 

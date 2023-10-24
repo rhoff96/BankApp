@@ -19,8 +19,8 @@ public class BankingApp {
         Customer currentCustomer = session.welcome();
         boolean isNew = session.userIsNew;
         String accountType = session.promptForAccountType();
-        Account currentAccount = session.returnAccount(isNew, accountType);
-//        Transaction transact = new Transaction(currentCustomer, currentAccount, ui);
+        Account currentAccount = session.createOrSelectAccount(isNew, accountType);
+//        Transaction transact = new Transaction();
 //        transact.transact();
     }
 

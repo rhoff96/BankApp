@@ -1,12 +1,12 @@
 package org.example.model;
 
-import java.math.BigDecimal;
+import org.example.dao.AccountDao;
+import org.example.dao.JdbcAccountDao;
 
 public class Account {
     private int accountNumber;
     private int customerId;
     private String accountType;
-
     public Account() {
     }
 

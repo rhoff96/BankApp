@@ -3,9 +3,9 @@ package org.example;
 import java.math.BigDecimal;
 
 public class Account {
-    private final String accountType;
     private int accountNumber;
     private int customerId;
+    private final String accountType;
     private BigDecimal balance;
     private UserInterface ui;
 
