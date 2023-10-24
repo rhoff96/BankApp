@@ -10,9 +10,6 @@ public class SavingsAccount extends Account {
     public SavingsAccount(String accountType, int customer_id) {
         super(accountType, customer_id);
     }
-    public void accrueInterest(User currentUser){
-        //work in progress
-    }
 
     @Override
     public BigDecimal withdraw(BigDecimal bd) {

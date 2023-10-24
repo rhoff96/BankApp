@@ -4,9 +4,11 @@ import org.example.dao.*;
 import org.example.exception.DaoException;
 import org.example.model.Account;
 import org.example.model.Customer;
+import org.example.model.Transaction;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 public class Session {
@@ -52,14 +54,6 @@ public class Session {
         return currentCustomer;
     }
 
-    public String promptForAccountType() {
-        String accountType = "";
-        System.out.printf("Would you like to open a" +
-                " (C)hecking or (S)avings account today? ", currentCustomer.getFirstName());
-        accountType = ui.getAlpha().toLowerCase();
-        return accountType;
-    }
-
     public void printOpening() {
         ui.put("Welcome to Tech Elevator Bank!\n");
         ui.put("===$$=================Bank Policies===================$$===\n");
@@ -73,6 +67,14 @@ public class Session {
         ui.put("    -Platinum: Total Balance of all accounts at or above $25000. Savings interest rate: 5%");
         ui.put("Tiers are calculated at the conclusion of each banking session.");
         ui.put("-------------------------------------------------------------");
+    }
+
+    public String promptForAccountType() {
+        String accountType = "";
+        System.out.printf("Would you like to open a" +
+                " (C)hecking or (S)avings account today? ", currentCustomer.getFirstName());
+        accountType = ui.getAlpha().toLowerCase();
+        return accountType;
     }
 
     public Customer createCustomer() {
@@ -136,37 +138,42 @@ public class Session {
             }
         }
     }
+
     public void transact() {
-        while (true) {
-            if (currentAccount.getBalance().compareTo(new BigDecimal(0)) == 0) {
-                System.out.printf("Your %s account has a balance of $0.\n", currentAccount.getAccountType());
-                ui.put("Please enter deposit amount: ");
-                BigDecimal bigCredit = ui.getBigDec();
-                currentAccount.deposit(bigCredit);
-                String typeAmount = "Initial Deposit $" + bigCredit;
-                log.logEntry(currentUser, currentAccount, typeAmount);
-            }
-            if (currentCustomer.userAccounts.size() == 1) {
+        if (ad.getAccountBalanceByAccountNumber(currentAccount.getAccountNumber()).compareTo(new BigDecimal(0)) == 0) {
+            System.out.printf("Your %s account has a balance of $%s.\n", currentAccount.getAccountType(),
+                    ad.getAccountBalanceByAccountNumber(currentAccount.getAccountNumber()));
+            transactionAction("d");
+        } else {
+            loopSession();
+        }
+    }
+
+    public void loopSession() {
+        boolean continueSession = true;
+        while (continueSession) {
+            ui.put("Current account is " + currentAccount.toString());
+            if (this.cd.getAccountsByCustomerId(currentCustomer.getCustomerId()).size() == 1) {
                 ui.put("Would you like to (W)ithdraw funds, (D)eposit funds, (G)et balance, or (O)pen another account? ");
             } else {
                 ui.put("Would you like to (W)ithdraw funds, (D)eposit funds, (T)ransfer between accounts," +
-                        " (L)ist accounts, (S)witch accounts or (O)pen another account? ");
+                        " (L)ist total balance, (S)witch accounts or (O)pen another account? ");
             }
             String choice = ui.getAlpha().toLowerCase();
-
             transactionAction(choice);
-            keepBanking();
+            continueSession = promptToContinue();
         }
         currentCustomer.setTier();
         ui.put("Banking session complete.");
     }
-    public void keepBanking() {
+
+    public boolean promptToContinue() {
+        boolean keepBanking = true;
         while (true) {
-            ui.put("Current account is " + currentCustomer.currentAccount.toString());
             ui.put("Would you like to keep banking? (y/n)");
             String response = ui.getAlpha();
             if (response.equalsIgnoreCase("n")) {
-                isBanking = false;
+                keepBanking = false;
                 break;
             } else if (response.equalsIgnoreCase("y")) {
                 break;
@@ -174,60 +181,120 @@ public class Session {
                 ui.put("Please enter y or n.");
             }
         }
+        return keepBanking;
     }
+
+    public Transaction processTransaction(BigDecimal amount) {
+        Transaction newTransaction = new org.example.model.Transaction();
+        newTransaction.setCustomerId(currentCustomer.getCustomerId());
+        newTransaction.setPreviousBalance(this.ad.getAccountBalanceByAccountNumber(currentAccount.getCustomerId()));
+        newTransaction.setTime(LocalDate.now());
+        newTransaction.setAmount(amount);
+        newTransaction.setAccountNumber(currentAccount.getAccountNumber());
+        return td.createTransaction(newTransaction);
+    }
+
     public void transactionAction(String choice) {
-        String typeAmount = "";
         switch (choice) {
             case "w":
-                ui.put("Please enter withdrawal amount: ");
-                BigDecimal bigDebit = ui.getBigDec();
-                BigDecimal tempBalance = currentAccount.getBalance();
-                currentAccount.withdraw(bigDebit);
-                BigDecimal withdrawal = tempBalance.subtract(currentAccount.getBalance());
-                typeAmount = "Withdraw $" + withdrawal;
+                withdraw();
                 break;
             case "d":
-                ui.put("Please enter deposit amount: ");
-                BigDecimal bigCredit = ui.getBigDec();
-                currentAccount.deposit(bigCredit);
-                ui.put("Current balance is $" + currentAccount.getBalance());
-                typeAmount = "Deposit $" + bigCredit;
+                deposit();
                 break;
             case "g":
-                ui.put("Your current balance is $" + currentAccount.getBalance());
-                return;
+                break;
             case "t":
-                ui.put("Please provide transfer amount: ");
-                BigDecimal transferBig = ui.getBigDec();
-                if (transferBig.compareTo(currentUser.currentAccount.getBalance()) > 0) {
-                    ui.put("Amount must be less than current balance.");
-                    return;
-                }
-                org.example.Account accountTo = currentAccount.pickTransferAccount(currentUser);
-                if (accountTo == null) {
-                    return;
-                }
-                boolean enoughFunds = currentAccount.transfer(currentUser, accountTo, transferBig);
-                if (!enoughFunds) return;
-                String typeAmountFrom = "Transfer -$" + transferBig;
-                typeAmount = "Transfer $" + transferBig;
-                log.logEntry(currentUser, currentAccount, typeAmountFrom);
-                log.logEntry(currentUser, accountTo, typeAmount);
+                Account transferTo = pickTransferAccount();
+                BigDecimal amount = promptForTransferAmount();
+                transfer(transferTo, amount);
                 return;
             case "o":
-                currentAccount = currentUser.createAccount();
+                currentAccount = this.createAccount(promptForAccountType());
                 return;
             case "l":
-                ui.put("Total Balance: $ " + currentUser.getTotalBalance());
+                ui.put("Total Balance: $ " + cd.getTotalBalanceByCustomerId(currentCustomer.getCustomerId()));
                 return;
             case "s":
-                currentUser.selectAccount();
+                this.selectAccount();
                 return;
             default:
                 ui.put("Please select an option from the list.");
-                transact();
+                loopSession();
         }
-        log.logEntry(currentUser, currentUser.currentAccount, typeAmount);
+        ui.put("Current balance is $" + ad.getAccountBalanceByAccountNumber(currentAccount.getAccountNumber()));
+    }
+
+    private BigDecimal promptForTransferAmount() {
+        BigDecimal transferBig;
+        while (true) {
+            ui.put("Please provide transfer amount: ");
+            transferBig = ui.getBigDec();
+            if (transferBig.compareTo((this.ad.getAccountBalanceByAccountNumber(currentAccount.getAccountNumber()))) > 0) {
+                ui.put("Amount must be less than current balance.");
+            } else {
+                break;
+            }
+        }
+        return transferBig;
+    }
+
+    public Account pickTransferAccount() {
+        ui.put("Current account :#" + currentAccount.getAccountNumber() +
+                " Balance $" + ad.getAccountBalanceByAccountNumber(currentAccount.getAccountNumber()));
+        ui.put("Available accounts to transfer to: ");
+        List<Account> accounts = cd.getAccountsByCustomerId(currentCustomer.getCustomerId());
+        for (Account account : accounts) {
+            if (account != currentAccount)
+                ui.put(account.toString());
+        }
+        Account accountTo = null;
+        ui.put("Please enter the account number to transfer to: ");
+        int acctNumToTransferTo;
+        while (true) {
+            acctNumToTransferTo = ui.getInt();
+            for (Account account : accounts) {
+                if (account.getAccountNumber() == acctNumToTransferTo) {
+                    accountTo = account;
+                    return accountTo;
+                }
+            }
+            ui.put("Account not found.");
+        }
+    }
+
+    public boolean transfer(Account accountTo, BigDecimal transferBig) {
+        BigDecimal debit = transferBig.multiply(BigDecimal.valueOf(-1));
+        this.processTransaction(debit);
+        Account temp = currentAccount;
+        currentAccount = accountTo;
+        this.processTransaction(transferBig);
+        currentAccount = temp;
+        ui.put("Transfer completed");
+        return true;
+
+    }
+
+    private BigDecimal withdraw() {
+        ui.put("Please enter withdrawal amount: ");
+        BigDecimal bigDebit = ui.getBigDec();
+        BigDecimal tempBalance = ad.getAccountBalanceByAccountNumber(currentAccount.getAccountNumber());
+        BigDecimal test = tempBalance.subtract(bigDebit);
+        if (test.compareTo(BigDecimal.ZERO) < 0) {
+            ui.put("Insufficient funds. Your account was debited the maximum allowed amount of $" + tempBalance);
+            processTransaction(tempBalance.multiply(BigDecimal.valueOf(-1)));
+        } else {
+            processTransaction(bigDebit.multiply(BigDecimal.valueOf(-1)));
+        }
+        BigDecimal newBalance = ad.getAccountBalanceByAccountNumber(currentAccount.getAccountNumber());
+        ui.put("Current balance is: $" + newBalance);
+        return newBalance;
+    }
+
+    public void deposit() {
+        ui.put("Please enter deposit amount: ");
+        BigDecimal bigCredit = ui.getBigDec();
+        processTransaction(bigCredit);
     }
 
     public String getName() {

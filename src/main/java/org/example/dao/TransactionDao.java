@@ -14,6 +14,13 @@ public interface TransactionDao {
      */
     Transaction getTransactionById(int transactionId);
     /**
+     * Creates a new transaction
+     * @param transaction object
+     * @return full transaction object
+     * @throws DaoException if an error occurs
+     */
+    Transaction createTransaction(Transaction transaction);
+    /**
      *Gets all transactions for a customer
      * @param customerId
      * @return a list of transaction objects, ordered by date, newest to oldest.

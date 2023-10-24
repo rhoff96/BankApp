@@ -20,8 +20,7 @@ public class BankingApp {
         boolean isNew = session.userIsNew;
         String accountType = session.promptForAccountType();
         Account currentAccount = session.createOrSelectAccount(isNew, accountType);
-//        Transaction transact = new Transaction();
-//        transact.transact();
+        session.transact();
     }
 
     public static void main(String[] args) {

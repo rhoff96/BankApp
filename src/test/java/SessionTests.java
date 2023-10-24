@@ -31,4 +31,5 @@ public class SessionTests {
         Customer actual = testCd.getCustomerByNameAndPassword("Russell Hoffman","admin");
         Assert.assertEquals("If user is returning, return correct user", CUSTOMER_1,actual);
     }
+
 }

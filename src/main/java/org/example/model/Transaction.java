@@ -12,8 +12,9 @@ public class Transaction {
     private BigDecimal amount;
 
     public Transaction(){}
-    public Transaction(LocalDate time, int transactionId, int customerId, int accountNumber, BigDecimal amount) {
+    public Transaction(LocalDate time, BigDecimal previousBalance, int transactionId, int customerId, int accountNumber, BigDecimal amount) {
         this.time = time;
+        this.previousBalance = previousBalance;
         this.transactionId = transactionId;
         this.customerId = customerId;
         this.accountNumber = accountNumber;

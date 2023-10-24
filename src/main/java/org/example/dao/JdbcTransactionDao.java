@@ -3,6 +3,7 @@ package org.example.dao;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.example.exception.DaoException;
 import org.example.model.Transaction;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
@@ -37,6 +38,25 @@ public class JdbcTransactionDao implements TransactionDao {
             throw new DaoException("Unable to connect to server or database");
         }
         return transaction;
+    }
+
+    @Override
+    public Transaction createTransaction(Transaction transaction) {
+        Transaction newTransaction = null;
+        final String sql = "INSERT INTO transaction (time, previous_balance, customer_id, account_number, amount) \" +\n" +
+                "                     \"VALUES (?, ?, ?, ?, ?) RETURNING transaction_id;";
+        try {
+            int newTransactionId = jdbcTemplate.queryForObject(sql, int.class,transaction.getTime(),
+                    transaction.getPreviousBalance(),transaction.getCustomerId(),
+                    transaction.getAccountNumber(),transaction.getAmount());
+            newTransaction = getTransactionById(newTransactionId);
+        } catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database");
+        } catch (DataIntegrityViolationException e) {
+            throw new DaoException("Data integrity violation");
+
+        }
+        return newTransaction;
     }
 
     @Override
