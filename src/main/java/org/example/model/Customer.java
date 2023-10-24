@@ -8,8 +8,8 @@ public class Customer {
     private int customerId;
     private String name;
     private String password;
-    private Tier tier;
-    private final CustomerDao customerDao = new JdbcCustomerDao();
+    public Tier tier;
+    //private final CustomerDao customerDao = new JdbcCustomerDao();
     public Customer() {
     }
 
@@ -55,18 +55,17 @@ public class Customer {
         Platinum
     }
 
-    public void setTier() {
-        if (customerDao.getTotalBalanceByCustomerId(this.getCustomerId()).compareTo(new BigDecimal("5000")) < 0) {
-            this.tier = Customer.Tier.Bronze;
-        } else if (customerDao.getTotalBalanceByCustomerId(this.getCustomerId()).compareTo(new BigDecimal("10000")) < 0) {
-            this.tier = Customer.Tier.Silver;
-        } else if (customerDao.getTotalBalanceByCustomerId(this.getCustomerId()).compareTo(new BigDecimal("25000")) < 0) {
-            this.tier = Customer.Tier.Gold;
-        } else {
-            this.tier = Customer.Tier.Platinum;
-        }
-//        setInterestRate(currentUser);
-    }
+//    public void setTier() {
+//        if (customerDao.getTotalBalanceByCustomerId(this.getCustomerId()).compareTo(new BigDecimal("5000")) < 0) {
+//            this.tier = Customer.Tier.Bronze;
+//        } else if (customerDao.getTotalBalanceByCustomerId(this.getCustomerId()).compareTo(new BigDecimal("10000")) < 0) {
+//            this.tier = Customer.Tier.Silver;
+//        } else if (customerDao.getTotalBalanceByCustomerId(this.getCustomerId()).compareTo(new BigDecimal("25000")) < 0) {
+//            this.tier = Customer.Tier.Gold;
+//        } else {
+//            this.tier = Customer.Tier.Platinum;
+//        }
+//    }
 
     public Customer.Tier getTier() {
         return tier;

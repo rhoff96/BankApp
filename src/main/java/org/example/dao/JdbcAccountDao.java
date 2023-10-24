@@ -1,6 +1,5 @@
 package org.example.dao;
 
-import org.apache.commons.dbcp2.BasicDataSource;
 import org.example.exception.DaoException;
 import org.example.model.Account;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -8,17 +7,14 @@ import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 
+import javax.sql.DataSource;
 import java.math.BigDecimal;
 
 public class JdbcAccountDao implements AccountDao {
     private final JdbcTemplate jdbcTemplate;
 
-    public JdbcAccountDao() {
-        final BasicDataSource ds = new BasicDataSource();
-        ds.setUrl("jdbc:postgresql://localhost:5432/Bank");
-        ds.setUsername("postgres");
-        ds.setPassword("postgres1");
-        this.jdbcTemplate = new JdbcTemplate(ds);
+    public JdbcAccountDao(DataSource dataSource) {
+        this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
     @Override

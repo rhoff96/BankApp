@@ -1,13 +1,11 @@
 package org.example.dao;
 
-import org.apache.commons.dbcp2.BasicDataSource;
 import org.example.exception.DaoException;
 import org.example.model.Transaction;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
-
 import javax.sql.DataSource;
 import java.util.List;
 
@@ -15,12 +13,8 @@ public class JdbcTransactionDao implements TransactionDao {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public JdbcTransactionDao() {
-        final BasicDataSource ds = new BasicDataSource();
-        ds.setUrl("jdbc:postgresql://localhost:5432/Bank");
-        ds.setUsername("postgres");
-        ds.setPassword("postgres1");
-        this.jdbcTemplate = new JdbcTemplate(ds);
+    public JdbcTransactionDao(DataSource dataSource) {
+        this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
     @Override

@@ -1,6 +1,5 @@
 package org.example.dao;
 
-import org.apache.commons.dbcp2.BasicDataSource;
 import org.example.exception.DaoException;
 import org.example.model.Account;
 import org.example.model.Customer;
@@ -8,6 +7,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
+
+import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,12 +17,8 @@ public class JdbcCustomerDao implements CustomerDao {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public JdbcCustomerDao() {
-        final BasicDataSource ds = new BasicDataSource();
-        ds.setUrl("jdbc:postgresql://localhost:5432/Bank");
-        ds.setUsername("postgres");
-        ds.setPassword("postgres1");
-        this.jdbcTemplate = new JdbcTemplate(ds);
+    public JdbcCustomerDao(DataSource datasource) {
+        this.jdbcTemplate = new JdbcTemplate(datasource);
     }
 
     @Override
@@ -123,9 +120,7 @@ public class JdbcCustomerDao implements CustomerDao {
     @Override
     public List<Account> getAccountsByCustomerId(int customerId) {
         List<Account> accounts = new ArrayList<>();
-        String sql = "SELECT account_number, customer_id" +
-                "FROM account" +
-                "WHERE customer_id = ?;";
+        String sql = "SELECT account_number, customer_id FROM account WHERE customer_id = ?;";
         try {
             SqlRowSet results = jdbcTemplate.queryForRowSet(sql, customerId);
             while (results.next()) {
