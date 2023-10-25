@@ -20,7 +20,7 @@ public class JdbcTransactionDao implements TransactionDao {
     @Override
     public Transaction getTransactionById(int transactionId) {
         Transaction transaction = null;
-        final String sql = "SELECT transaction_id, time, customer_id, account_number, previous balance, amount\n" +
+        final String sql = "SELECT transaction_id, time, customer_id, account_number, previous_balance, amount\n" +
                 "FROM transaction\n" +
                 "WHERE transaction_id = ?;";
         try {
@@ -90,7 +90,7 @@ public class JdbcTransactionDao implements TransactionDao {
         transaction.setAccountNumber(rowSet.getInt("account_number"));
         transaction.setAmount(rowSet.getBigDecimal("amount"));
         transaction.setCustomerId(rowSet.getInt("customer_id"));
-        transaction.setTime(rowSet.getDate("time").toLocalDate());
+        transaction.setTime(rowSet.getDate("time").toLocalDate().atStartOfDay());
         transaction.setTransactionId(rowSet.getInt("transaction_id"));
         transaction.setPreviousBalance(rowSet.getBigDecimal("previous_balance"));
         return transaction;

@@ -1,4 +1,4 @@
 package org.example.dao;
 
-public class JdbcAccountDaoTests {
+public class JdbcAccountDaoTests extends BaseDaoTests{
 }

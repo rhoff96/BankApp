@@ -2,9 +2,10 @@ package org.example.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class Transaction {
-    private LocalDate time;
+    private LocalDateTime time;
     private int transactionId;
     private int customerId;
     private int accountNumber;
@@ -12,7 +13,7 @@ public class Transaction {
     private BigDecimal amount;
 
     public Transaction(){}
-    public Transaction(LocalDate time, BigDecimal previousBalance, int transactionId, int customerId, int accountNumber, BigDecimal amount) {
+    public Transaction(LocalDateTime time, BigDecimal previousBalance, int transactionId, int customerId, int accountNumber, BigDecimal amount) {
         this.time = time;
         this.previousBalance = previousBalance;
         this.transactionId = transactionId;
@@ -20,7 +21,7 @@ public class Transaction {
         this.accountNumber = accountNumber;
         this.amount = amount;
     }
-    public LocalDate getTime() {
+    public LocalDateTime getTime() {
         return time;
     }
 
@@ -39,7 +40,7 @@ public class Transaction {
     public BigDecimal getAmount() {
         return amount;
     }
-    public void setTime(LocalDate time) {
+    public void setTime(LocalDateTime time) {
         this.time = time;
     }
 

@@ -11,12 +11,13 @@ import org.springframework.dao.DataIntegrityViolationException;
 import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class Session {
     private Customer currentCustomer = null;
     private Account currentAccount = null;
-    protected boolean userIsNew = false;
+    protected boolean customerIsNew = false;
     private final UserInterface ui;
     private String name;
     private String password;
@@ -38,6 +39,7 @@ public class Session {
         cd = new JdbcCustomerDao(dataSource);
         ad = new JdbcAccountDao(dataSource);
         td = new JdbcTransactionDao(dataSource);
+        welcome();
 
     }
     public Customer welcome() {
@@ -55,12 +57,12 @@ public class Session {
                 String choice = ui.getAlpha();
                 if (choice.equalsIgnoreCase("C")) {
                     currentCustomer = createCustomer();
-                    userIsNew = true;
+                    customerIsNew = true;
+                    break;
                 }
             }
-            break;
         }
-        this.setTier();
+        currentCustomer.setTier();
         System.out.printf("Welcome back, %s. Your current Tier is %s.\n",
                 currentCustomer.getFirstName(), currentCustomer.getTier());
         return currentCustomer;
@@ -104,17 +106,6 @@ public class Session {
         }
         return currentCustomer;
     }
-    public void setTier() {
-        if (cd.getTotalBalanceByCustomerId(currentCustomer.getCustomerId()).compareTo(new BigDecimal("5000")) < 0) {
-            currentCustomer.tier = Customer.Tier.Bronze;
-        } else if (cd.getTotalBalanceByCustomerId(currentCustomer.getCustomerId()).compareTo(new BigDecimal("10000")) < 0) {
-            currentCustomer.tier = Customer.Tier.Silver;
-        } else if (cd.getTotalBalanceByCustomerId(currentCustomer.getCustomerId()).compareTo(new BigDecimal("25000")) < 0) {
-            currentCustomer.tier = Customer.Tier.Gold;
-        } else {
-            currentCustomer.tier = Customer.Tier.Platinum;
-        }
-    }
 
     public Account createOrSelectAccount(boolean customerIsNew, String accountType) {
         if (customerIsNew) {
@@ -126,20 +117,17 @@ public class Session {
     }
 
     public Account createAccount(String accountType) {
-        while (true) {
             switch (accountType) {
                 case "c":
                     accountType = "Checking";
                     Account checking = new Account(currentCustomer.getCustomerId(), accountType);
                     currentAccount = ad.createAccount(checking);
-                    return currentAccount;
                 case "s":
                     accountType = "Savings";
                     Account savings = new Account(currentCustomer.getCustomerId(), accountType);
                     currentAccount = ad.createAccount(savings);
-                    return currentAccount;
             }
-        }
+            return currentAccount;
     }
 
     public Account selectAccount() {
@@ -160,14 +148,10 @@ public class Session {
             ui.put("Please select an available account");
         }
     }
-    public BigDecimal getAccountBalance(Account currentAccount){
-        return ad.getAccountBalanceByAccountNumber(currentAccount.getAccountNumber());
-
-    }
     public void transact() {
-        if (this.getAccountBalance(currentAccount).compareTo(new BigDecimal(0)) == 0) {
+        if (currentAccount.getAccountBalance().compareTo(new BigDecimal(0)) == 0) {
             System.out.printf("Your %s account has a balance of $%s.\n", currentAccount.getAccountType(),
-                    this.getAccountBalance(currentAccount));
+                    currentAccount.getAccountBalance());
             transactionAction("d");
         } else {
             loopSession();
@@ -212,8 +196,8 @@ public class Session {
     public Transaction processTransaction(BigDecimal amount) {
         Transaction newTransaction = new org.example.model.Transaction();
         newTransaction.setCustomerId(currentCustomer.getCustomerId());
-        newTransaction.setPreviousBalance(this.ad.getAccountBalanceByAccountNumber(currentAccount.getCustomerId()));
-        newTransaction.setTime(LocalDate.now());
+        newTransaction.setPreviousBalance(currentAccount.getAccountBalance());
+        newTransaction.setTime(LocalDateTime.now());
         newTransaction.setAmount(amount);
         newTransaction.setAccountNumber(currentAccount.getAccountNumber());
         return td.createTransaction(newTransaction);
@@ -239,7 +223,7 @@ public class Session {
                 currentAccount = this.createAccount(promptForAccountType());
                 return;
             case "l":
-                ui.put("Total Balance: $ " + cd.getTotalBalanceByCustomerId(currentCustomer.getCustomerId()));
+                ui.put("Total Balance: $ " + currentCustomer.getTotalBalance());
                 return;
             case "s":
                 this.selectAccount();
@@ -248,7 +232,7 @@ public class Session {
                 ui.put("Please select an option from the list.");
                 loopSession();
         }
-        ui.put("Current balance is $" + this.getAccountBalance(currentAccount));
+        ui.put("Current balance is $" + currentAccount.getAccountBalance());
     }
 
     private BigDecimal promptForTransferAmount() {
@@ -256,7 +240,7 @@ public class Session {
         while (true) {
             ui.put("Please provide transfer amount: ");
             transferBig = ui.getBigDec();
-            if (transferBig.compareTo(this.getAccountBalance(currentAccount)) > 0) {
+            if (transferBig.compareTo(currentAccount.getAccountBalance()) > 0) {
                 ui.put("Amount must be less than current balance.");
             } else {
                 break;
@@ -267,7 +251,7 @@ public class Session {
 
     public Account pickTransferAccount() {
         ui.put("Current account :#" + currentAccount.getAccountNumber() +
-                " Balance $" + this.getAccountBalance(currentAccount));
+                " Balance $" + currentAccount.getAccountBalance());
         ui.put("Available accounts to transfer to: ");
         List<Account> accounts = cd.getAccountsByCustomerId(currentCustomer.getCustomerId());
         for (Account account : accounts) {
@@ -303,7 +287,7 @@ public class Session {
     public BigDecimal checkingWithdraw() {
         ui.put("Please enter withdrawal amount: ");
         BigDecimal bigDebit = ui.getBigDec();
-        BigDecimal tempBalance = this.getAccountBalance(currentAccount);
+        BigDecimal tempBalance = currentAccount.getAccountBalance();
         BigDecimal test = tempBalance.subtract(bigDebit);
         if (test.compareTo(BigDecimal.ZERO) < 0) {
             ui.put("Insufficient funds. Your account was debited the maximum allowed amount of $" + tempBalance);
@@ -311,7 +295,7 @@ public class Session {
         } else {
             processTransaction(bigDebit.multiply(BigDecimal.valueOf(-1)));
         }
-        BigDecimal newBalance = this.getAccountBalance(currentAccount);
+        BigDecimal newBalance = currentAccount.getAccountBalance();
         ui.put("Current balance is: $" + newBalance);
         return newBalance;
     }
@@ -323,18 +307,18 @@ public class Session {
 
         if (withdrawalCounter == SAVINGS_WITHDRAWAL_MAX) {
             ui.put("You have reached the maximum number of allowed withdrawals per session from a savings account.");
-            return this.getAccountBalance(currentAccount);
+            return currentAccount.getAccountBalance();
         }
         ui.put("Please enter withdrawal amount: ");
         BigDecimal bigDebit = ui.getBigDec();
-        if (this.getAccountBalance(currentAccount).subtract(bigDebit).compareTo(MINIMUM_BALANCE) < 0) {
-            if (this.getAccountBalance(currentAccount).subtract(bigDebit).compareTo(BigDecimal.ZERO) < 0) {
+        if (currentAccount.getAccountBalance().subtract(bigDebit).compareTo(MINIMUM_BALANCE) < 0) {
+            if (currentAccount.getAccountBalance().subtract(bigDebit).compareTo(BigDecimal.ZERO) < 0) {
                 ui.put("Withdrawals equal or greater than current balance are not allowed. Transaction failed");
-                return this.getAccountBalance(currentAccount);
+                return currentAccount.getAccountBalance();
             } else {
                 processTransaction((bigDebit.add(OVERDRAFT_FEE)).multiply(BigDecimal.valueOf(-1)));
                 ui.put("Your balance fell below the minimum balance of $100 and is assessed a fee of $10.");
-                ui.put("Your current balance is $" + this.getAccountBalance(currentAccount));
+                ui.put("Your current balance is $" + currentAccount.getAccountBalance());
             }
         } else {
             this.checkingWithdraw();
@@ -342,7 +326,7 @@ public class Session {
         withdrawalCounter++;
         System.out.printf("You have %d remaining withdrawals today. ", SAVINGS_WITHDRAWAL_MAX - withdrawalCounter);
 
-        return this.getAccountBalance(currentAccount);
+        return currentAccount.getAccountBalance();
     }
 
     public void deposit() {

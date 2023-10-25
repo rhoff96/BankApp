@@ -1,15 +1,22 @@
 package org.example.model;
 
-import org.example.dao.CustomerDao;
-import org.example.dao.JdbcCustomerDao;
 import java.math.BigDecimal;
 
 public class Customer {
     private int customerId;
     private String name;
     private String password;
-    public Tier tier;
-    //private final CustomerDao customerDao = new JdbcCustomerDao();
+    private Tier tier;
+    private BigDecimal totalBalance;
+
+    public BigDecimal getTotalBalance() {
+        return totalBalance;
+    }
+
+    public void setTotalBalance(BigDecimal totalBalance) {
+        this.totalBalance = totalBalance;
+    }
+
     public Customer() {
     }
 
@@ -54,18 +61,17 @@ public class Customer {
         Gold,
         Platinum
     }
-
-//    public void setTier() {
-//        if (customerDao.getTotalBalanceByCustomerId(this.getCustomerId()).compareTo(new BigDecimal("5000")) < 0) {
-//            this.tier = Customer.Tier.Bronze;
-//        } else if (customerDao.getTotalBalanceByCustomerId(this.getCustomerId()).compareTo(new BigDecimal("10000")) < 0) {
-//            this.tier = Customer.Tier.Silver;
-//        } else if (customerDao.getTotalBalanceByCustomerId(this.getCustomerId()).compareTo(new BigDecimal("25000")) < 0) {
-//            this.tier = Customer.Tier.Gold;
-//        } else {
-//            this.tier = Customer.Tier.Platinum;
-//        }
-//    }
+    public void setTier() {
+        if (this.totalBalance.compareTo(new BigDecimal("5000")) < 0) {
+            this.tier = Customer.Tier.Bronze;
+        } else if (this.totalBalance.compareTo(new BigDecimal("10000")) < 0) {
+            this.tier = Customer.Tier.Silver;
+        } else if (this.totalBalance.compareTo(new BigDecimal("25000")) < 0) {
+            this.tier = Customer.Tier.Gold;
+        } else {
+            this.tier = Customer.Tier.Platinum;
+        }
+    }
 
     public Customer.Tier getTier() {
         return tier;

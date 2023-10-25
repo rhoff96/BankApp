@@ -15,7 +15,7 @@ public class SessionTests extends BaseDaoTests {
     private static final Customer CUSTOMER_2 = new Customer(2, "Mike Levy","test123");
     @Before
     public void setup(){
-         testCd = new JdbcCustomerDao(dataSource);
+       //  testCd = new JdbcCustomerDao(dataSource);
 
     }
     @Test

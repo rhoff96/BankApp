@@ -17,13 +17,11 @@ public class BankingApp {
         UserInterface ui = new UserInterface();
         Session session = new Session(ui);
         session.setup();
-        Customer currentCustomer = session.welcome();
-        boolean isNew = session.userIsNew;
         String accountType = null;
-        if (isNew) {
+        if (session.customerIsNew) {
             accountType = session.promptForAccountType();
         }
-        Account currentAccount = session.createOrSelectAccount(isNew, accountType);
+        session.createOrSelectAccount(session.customerIsNew, accountType);
         session.transact();
     }
 

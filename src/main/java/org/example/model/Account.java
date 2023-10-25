@@ -1,12 +1,22 @@
 package org.example.model;
 
-import org.example.dao.AccountDao;
-import org.example.dao.JdbcAccountDao;
+
+import java.math.BigDecimal;
 
 public class Account {
     private int accountNumber;
     private int customerId;
     private String accountType;
+    private BigDecimal accountBalance;
+
+    public void setAccountBalance(BigDecimal accountBalance) {
+        this.accountBalance = accountBalance;
+    }
+
+    public BigDecimal getAccountBalance() {
+        return accountBalance;
+    }
+
     public Account() {
     }
 

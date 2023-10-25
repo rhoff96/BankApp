@@ -20,12 +20,7 @@ public interface AccountDao {
      * @throws DaoException if an error occurs
      */
     Account createAccount(Account account);
-    /**
-     * @param accountNumber
-     * @return account balance
-     * @throws DaoException if an error occurs
-     */
-    BigDecimal getAccountBalanceByAccountNumber(int accountNumber);
+
     /**
      *Update an existing account in the datastore.
      * @param account object to update

@@ -23,31 +23,21 @@ public class JdbcAccountDao implements AccountDao {
         final String sql = "SELECT account_number, customer_id, type" +
                 "FROM account\n" +
                 "WHERE account_number = ?;";
+        final String sql2 = "SELECT SUM(previous_balance + amount) AS account_balance " +
+                "FROM transaction WHERE account_number = ?;";
         try {
             SqlRowSet results = jdbcTemplate.queryForRowSet(sql, accountId);
+            BigDecimal balance = jdbcTemplate.queryForObject(sql2, BigDecimal.class,accountId);
             if (results.next()) {
                 account.setAccountNumber(results.getInt("account_number"));
                 account.setCustomerId(results.getInt("customer_id"));
                 account.setAccountType(results.getString("type"));
+                account.setAccountBalance(balance);
             }
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database");
         }
         return account;
-    }
-    public BigDecimal getAccountBalanceByAccountNumber(int accountNumber) {
-        BigDecimal accountBalance = null;
-        final String sql = "SELECT SUM(previous_balance + amount) AS account_balance \n" +
-                "FROM transaction\n" +
-                "WHERE account_number = ?;";
-        try {
-            SqlRowSet results = jdbcTemplate.queryForRowSet(sql, accountNumber);
-            accountBalance = results.getBigDecimal("account_balance");
-
-        } catch (CannotGetJdbcConnectionException e) {
-            throw new DaoException("Unable to connect to server or database");
-        }
-        return accountBalance;
     }
 
     @Override
