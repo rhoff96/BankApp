@@ -7,6 +7,9 @@ import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import javax.sql.DataSource;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 
 public class JdbcTransactionDao implements TransactionDao {
@@ -90,7 +93,8 @@ public class JdbcTransactionDao implements TransactionDao {
         transaction.setAccountNumber(rowSet.getInt("account_number"));
         transaction.setAmount(rowSet.getBigDecimal("amount"));
         transaction.setCustomerId(rowSet.getInt("customer_id"));
-        transaction.setTime(rowSet.getDate("time").toLocalDate().atStartOfDay());
+        Timestamp timestamp = rowSet.getTimestamp("time");
+        transaction.setTime(LocalDateTime.ofInstant(timestamp.toInstant(), ZoneOffset.ofHours(-4)));
         transaction.setTransactionId(rowSet.getInt("transaction_id"));
         transaction.setPreviousBalance(rowSet.getBigDecimal("previous_balance"));
         return transaction;

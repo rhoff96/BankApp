@@ -20,7 +20,8 @@ public class Account {
     public Account() {
     }
 
-    public Account(int customerId, String accountType) {
+    public Account(int accountNumber, int customerId, String accountType) {
+        this.accountNumber = accountNumber;
         this.customerId = customerId;
         this.accountType = accountType;
     }
@@ -51,5 +52,22 @@ public class Account {
     @Override
     public String toString() {
         return this.accountType + " #" + this.getAccountNumber();
+    }
+    @Override
+    public boolean equals(Object obj) {
+        Account other = (Account) obj;
+        if (!this.getClass().equals(other.getClass())) {
+            return false;
+        }
+        if (!this.getAccountType().equals(other.getAccountType())) {
+            return false;
+        }
+        if (!(this.getAccountNumber() == other.getAccountNumber())) {
+            return false;
+        }
+        if (!(this.getCustomerId() == other.getCustomerId())){
+            return false;
+        }
+        return true;
     }
 }

@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 
 public class CustomerTests {
     private Customer c = new Customer(1, "tester", "password");
-    private org.example.model.Account a = new org.example.model.Account(1, "Checking");
+    private org.example.model.Account a = new org.example.model.Account(1,1, "Checking");
 
     @Test
     public void when_customer_has_total_balance_1000_then_set_tier_bronze() {

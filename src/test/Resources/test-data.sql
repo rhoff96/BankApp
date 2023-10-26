@@ -34,6 +34,6 @@ INSERT INTO account(customer_id, type) VALUES (1, 'Checking');
 INSERT INTO account(customer_id, type) VALUES (1, 'Savings');
 
 INSERT INTO transaction(time, customer_id, account_number, previous_balance, amount) VALUES ('2023-10-25 05:00:00',1,1,100,10);
-INSERT INTO transaction(time, customer_id, account_number, previous_balance, amount) VALUES ('2023-11-20',1,2,50,200);
+INSERT INTO transaction(time, customer_id, account_number, previous_balance, amount) VALUES ('2023-11-20 12:00:00',1,2,50,200);
 
 COMMIT;

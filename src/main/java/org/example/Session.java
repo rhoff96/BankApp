@@ -63,7 +63,7 @@ public class Session {
             }
         }
         currentCustomer.setTier();
-        System.out.printf("Welcome back, %s. Your current Tier is %s.\n",
+        System.out.printf("Welcome, %s. Your current Tier is %s.\n",
                 currentCustomer.getFirstName(), currentCustomer.getTier());
         return currentCustomer;
     }
@@ -86,7 +86,7 @@ public class Session {
     public String promptForAccountType() {
         String accountType = "";
         System.out.printf("Would you like to open a" +
-                " (C)hecking or (S)avings account today? ", currentCustomer.getFirstName());
+                " (C)hecking or (S)avings account today? ");
         accountType = ui.getAlpha().toLowerCase();
         return accountType;
     }
@@ -120,11 +120,15 @@ public class Session {
             switch (accountType) {
                 case "c":
                     accountType = "Checking";
-                    Account checking = new Account(currentCustomer.getCustomerId(), accountType);
+                    Account checking = new Account();
+                    checking.setAccountType(accountType);
+                    checking.setCustomerId(currentCustomer.getCustomerId());
                     currentAccount = ad.createAccount(checking);
                 case "s":
                     accountType = "Savings";
-                    Account savings = new Account(currentCustomer.getCustomerId(), accountType);
+                    Account savings = new Account();
+                    savings.setAccountType(accountType);
+                    savings.setCustomerId(currentCustomer.getCustomerId());
                     currentAccount = ad.createAccount(savings);
             }
             return currentAccount;

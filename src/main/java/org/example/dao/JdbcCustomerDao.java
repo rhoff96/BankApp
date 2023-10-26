@@ -64,6 +64,7 @@ public class JdbcCustomerDao implements CustomerDao {
         try {
             int newCustomerId = jdbcTemplate.queryForObject(sql, int.class, customer.getName(), customer.getPassword());
             newCustomer = getCustomerById(newCustomerId);
+            newCustomer.setTotalBalance(BigDecimal.ZERO);
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database");
         } catch (DataIntegrityViolationException e) {

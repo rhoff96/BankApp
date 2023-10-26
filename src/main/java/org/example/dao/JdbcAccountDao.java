@@ -18,17 +18,18 @@ public class JdbcAccountDao implements AccountDao {
     }
 
     @Override
-    public Account getAccountById(int accountId) {
+    public Account getAccountById(int accountNumber) {
         Account account = null;
-        final String sql = "SELECT account_number, customer_id, type" +
+        final String sql = "SELECT account_number, customer_id, type\n" +
                 "FROM account\n" +
                 "WHERE account_number = ?;";
         final String sql2 = "SELECT SUM(previous_balance + amount) AS account_balance " +
                 "FROM transaction WHERE account_number = ?;";
         try {
-            SqlRowSet results = jdbcTemplate.queryForRowSet(sql, accountId);
-            BigDecimal balance = jdbcTemplate.queryForObject(sql2, BigDecimal.class,accountId);
+            SqlRowSet results = jdbcTemplate.queryForRowSet(sql, accountNumber);
+            BigDecimal balance = jdbcTemplate.queryForObject(sql2, BigDecimal.class,accountNumber);
             if (results.next()) {
+                account = new Account();
                 account.setAccountNumber(results.getInt("account_number"));
                 account.setCustomerId(results.getInt("customer_id"));
                 account.setAccountType(results.getString("type"));
@@ -42,10 +43,10 @@ public class JdbcAccountDao implements AccountDao {
 
     @Override
     public Account createAccount(Account account) {
-        Account newAccount = null;
-        final String sql = "INSERT INTO account(account_number, customer_id, type) VALUES (?,?,?) RETURNING customer_id;";
+        Account newAccount;
+        final String sql = "INSERT INTO account(customer_id, type) VALUES (?,?) RETURNING account_number;";
         try {
-            int newAccountId = jdbcTemplate.queryForObject(sql, int.class, account.getAccountNumber(), account.getCustomerId(),account.getAccountType());
+            int newAccountId = jdbcTemplate.queryForObject(sql, int.class, account.getCustomerId(),account.getAccountType());
             newAccount = getAccountById(newAccountId);
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database");
@@ -57,7 +58,7 @@ public class JdbcAccountDao implements AccountDao {
 
     @Override
     public Account updateAccount(Account account) {
-        Account updatedAccount = null;
+        Account updatedAccount;
         final String sql = "UPDATE account\n" +
                 "SET customer_id = ?, type = ?\n" +
                 "WHERE customer_id = ?;";
@@ -78,7 +79,7 @@ public class JdbcAccountDao implements AccountDao {
 
     @Override
     public int deleteAccountById(int accountId) {
-        int numberOfRows = 0;
+        int numberOfRows;
         String sql = "DELETE FROM account WHERE account_number = ?;";
         try {
             numberOfRows = jdbcTemplate.update(sql, accountId);

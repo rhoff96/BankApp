@@ -1,7 +1,5 @@
 package org.example.dao;
 
-import org.example.Session;
-import org.example.UserInterface;
 import org.example.model.Account;
 import org.example.model.Customer;
 import org.junit.Assert;
@@ -92,8 +90,8 @@ public class JdbcCustomerDaoTests extends BaseDaoTests {
     }
     @Test
     public void when_valid_customer_get_customer_by_id_returns_all_accounts(){
-        Account account1 = new Account(1, "Checking");
-        Account account2 = new Account(2, "Savings");
+        Account account1 = new Account(1,1, "Checking");
+        Account account2 = new Account(2,1, "Savings");
         List<Account> expected = new ArrayList<>();
         expected.add(account1);
         expected.add(account2);
