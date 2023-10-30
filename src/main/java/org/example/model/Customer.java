@@ -1,6 +1,7 @@
 package org.example.model;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 public class Customer {
     private int customerId;
@@ -8,6 +9,19 @@ public class Customer {
     private String password;
     private Tier tier;
     private BigDecimal totalBalance;
+    private LocalDateTime lastLogin;
+
+    public void setTier(Tier tier) {
+        this.tier = tier;
+    }
+
+    public LocalDateTime getLastLogin() {
+        return lastLogin;
+    }
+
+    public void setLastLogin(LocalDateTime lastLogin) {
+        this.lastLogin = lastLogin;
+    }
 
     public BigDecimal getTotalBalance() {
         return totalBalance;
@@ -85,10 +99,7 @@ public class Customer {
         if (!this.getName().equals(other.getName())) {
             return false;
         }
-        if (!this.getPassword().equals(other.getPassword())) {
-            return false;
-        }
-        return true;
+        return this.getPassword().equals(other.getPassword());
     }
 
     //    public Account createCheckingAccount() {

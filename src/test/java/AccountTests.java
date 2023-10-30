@@ -5,11 +5,11 @@ import org.junit.Test;
 import java.math.BigDecimal;
 
 public class AccountTests {
-    private final UserInterface ui = new UserInterface();
-    private final User currentUser = new User("TestUser", "admin", ui);
-    private final CheckingAccount acc = new CheckingAccount("Checking", 123);
-    private final SavingsAccount sa = new SavingsAccount("Savings", 123);
-
+//    private final UserInterface ui = new UserInterface();
+//    private final User currentUser = new User("TestUser", "admin", ui);
+//    private final CheckingAccount acc = new CheckingAccount("Checking", 123);
+//    private final SavingsAccount sa = new SavingsAccount("Savings", 123);
+//
 
 //    @Test
 //    public void when_checking_withdraw_greater_than_balance_then_return_0() {

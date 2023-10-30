@@ -1,15 +1,15 @@
 package org.example;
 
 import java.math.BigDecimal;
-
-public class SavingsAccount extends Account {
-    private final BigDecimal MINIMUM_BALANCE = new BigDecimal(100);
-    private final BigDecimal OVERDRAFT_FEE = new BigDecimal(10);
-    private int withdrawalCounter = 0;
-
-    public SavingsAccount(String accountType, int customer_id) {
-        super(accountType, customer_id);
-    }
+//
+//public class SavingsAccount extends Account {
+//    private final BigDecimal MINIMUM_BALANCE = new BigDecimal(100);
+//    private final BigDecimal OVERDRAFT_FEE = new BigDecimal(10);
+//    private int withdrawalCounter = 0;
+//
+//    public SavingsAccount(String accountType, int customer_id) {
+//        super(accountType, customer_id);
+//    }
 
 //    @Override
 //    public BigDecimal withdraw(BigDecimal bd) {
@@ -39,4 +39,4 @@ public class SavingsAccount extends Account {
 //        }
 //        return this.getBalance();
 //    }
-}
+//}

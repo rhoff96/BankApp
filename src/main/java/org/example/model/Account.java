@@ -7,7 +7,7 @@ public class Account {
     private int accountNumber;
     private int customerId;
     private String accountType;
-    private BigDecimal accountBalance;
+    private BigDecimal accountBalance = BigDecimal.ZERO;
 
     public void setAccountBalance(BigDecimal accountBalance) {
         this.accountBalance = accountBalance;
@@ -51,7 +51,8 @@ public class Account {
     }
     @Override
     public String toString() {
-        return this.accountType + " #" + this.getAccountNumber();
+        return this.accountType + " #" + this.getAccountNumber()
+                + " Current Balance: $" + this.getAccountBalance();
     }
     @Override
     public boolean equals(Object obj) {
@@ -65,9 +66,6 @@ public class Account {
         if (!(this.getAccountNumber() == other.getAccountNumber())) {
             return false;
         }
-        if (!(this.getCustomerId() == other.getCustomerId())){
-            return false;
-        }
-        return true;
+        return this.getCustomerId() == other.getCustomerId();
     }
 }

@@ -1,36 +1,33 @@
 package org.example.model;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 public class Transaction {
-    private LocalDateTime time;
+    private Timestamp time;
     private int transactionId;
-    private int customerId;
     private int accountNumber;
     private BigDecimal previousBalance;
     private BigDecimal amount;
 
-    public Transaction(){}
-    public Transaction(LocalDateTime time, BigDecimal previousBalance, int transactionId, int customerId, int accountNumber, BigDecimal amount) {
+    public Transaction() {
+    }
+
+    public Transaction(Timestamp time, BigDecimal previousBalance, int transactionId, int accountNumber, BigDecimal amount) {
         this.time = time;
         this.previousBalance = previousBalance;
         this.transactionId = transactionId;
-        this.customerId = customerId;
         this.accountNumber = accountNumber;
         this.amount = amount;
     }
-    public LocalDateTime getTime() {
+
+    public Timestamp getTime() {
         return time;
     }
 
     public int getTransactionId() {
         return transactionId;
-    }
-
-    public int getCustomerId() {
-        return customerId;
     }
 
     public int getAccountNumber() {
@@ -40,16 +37,13 @@ public class Transaction {
     public BigDecimal getAmount() {
         return amount;
     }
-    public void setTime(LocalDateTime time) {
+
+    public void setTime(Timestamp time) {
         this.time = time;
     }
 
     public void setTransactionId(int transactionId) {
         this.transactionId = transactionId;
-    }
-
-    public void setCustomerId(int customerId) {
-        this.customerId = customerId;
     }
 
     public void setAccountNumber(int accountNumber) {
@@ -59,11 +53,31 @@ public class Transaction {
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
+
     public BigDecimal getPreviousBalance() {
         return previousBalance;
     }
 
     public void setPreviousBalance(BigDecimal previousBalance) {
         this.previousBalance = previousBalance;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        Transaction other = (Transaction) obj;
+        if (!this.getClass().equals(other.getClass())) {
+            return false;
+        }
+        if (!this.getAmount().equals(other.getAmount())) {
+            return false;
+        }
+        if (!(this.getAccountNumber() == other.getAccountNumber())) {
+            return false;
+        }
+        if (!(this.getPreviousBalance().equals(other.getPreviousBalance()))) {
+            return false;
+        }
+        return this.getTransactionId() == other.getTransactionId();
+
     }
 }

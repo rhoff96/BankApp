@@ -3,18 +3,18 @@ package org.example;
 import java.math.BigDecimal;
 
 public class Transaction {
-    private User currentUser;
-    private Account currentAccount;
-    private boolean isBanking = true;
-    private final UserInterface ui;
-    private final Log log = new Log();
-
-
-    public Transaction(User currentUser, Account currentAccount, UserInterface ui) {
-        this.currentAccount = currentAccount;
-        this.currentUser = currentUser;
-        this.ui = ui;
-    }
+//    private User currentUser;
+//    private Account currentAccount;
+//    private boolean isBanking = true;
+//    private final UserInterface ui;
+//    private final Log log = new Log();
+//
+//
+//    public Transaction(User currentUser, Account currentAccount, UserInterface ui) {
+//        this.currentAccount = currentAccount;
+//        this.currentUser = currentUser;
+//        this.ui = ui;
+//    }
 
 //    public void transact() {
 //        while (isBanking) {

@@ -7,41 +7,41 @@ import java.util.List;
 
 public class User {
 
-    public Account currentAccount;
-    private String name;
-    private String password;
-    private final UserInterface ui;
-    //private Tier tier;
-    public List<Account> userAccounts = new ArrayList<>();
+//    public Account currentAccount;
+//    private String name;
+//    private String password;
+//    private final UserInterface ui;
+//    //private Tier tier;
+//    public List<Account> userAccounts = new ArrayList<>();
+//
+//
+//    public User(String name, String password, UserInterface ui) {
+//        this.name = name;
+//        this.password = password;
+//        this.ui = ui;
+//        //this.tier = null;
+//    }
+//
+//    public String getName() {
+//        return name;
+//    }
+//
+//    public String getFirstName() {
+//        String[] firstAndLast = this.name.split(" ");
+//        return firstAndLast[0];
+//    }
+//
+//    public String getPassword() {
+//        return password;
+//    }
 
-
-    public User(String name, String password, UserInterface ui) {
-        this.name = name;
-        this.password = password;
-        this.ui = ui;
-        //this.tier = null;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getFirstName() {
-        String[] firstAndLast = this.name.split(" ");
-        return firstAndLast[0];
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
+//    public void setName(String name) {
+//        this.name = name;
+//    }
+//
+//    public void setPassword(String password) {
+//        this.password = password;
+//    }
 
 //    public Account returnAccount(boolean userIsNew) {
 //        if (userIsNew) {
@@ -72,37 +72,37 @@ public class User {
 //            }
 //        }
 //    }
+//
+//    public Account selectAccount() {
+//        ui.put("Accounts available for banking: ");
+//        for (Account account : this.userAccounts) {
+//            ui.put(account.getAccountType() + " #" + account.getAccountNumber());
+//        }
+//        ui.put("Please enter an account number to access: ");
+//        int intSelection = ui.getInt();
+//        for (Account account : this.userAccounts) {
+//            if (account.getAccountNumber() == intSelection) {
+//                currentAccount = account;
+//            }
+//        }
+//        return currentAccount;
+//    }
 
-    public Account selectAccount() {
-        ui.put("Accounts available for banking: ");
-        for (Account account : this.userAccounts) {
-            ui.put(account.getAccountType() + " #" + account.getAccountNumber());
-        }
-        ui.put("Please enter an account number to access: ");
-        int intSelection = ui.getInt();
-        for (Account account : this.userAccounts) {
-            if (account.getAccountNumber() == intSelection) {
-                currentAccount = account;
-            }
-        }
-        return currentAccount;
-    }
-
-    public BigDecimal getTotalBalance() {
-        BigDecimal totalBalance = BigDecimal.ZERO;
-        for (Account account : this.userAccounts) {
-            System.out.println(account.getAccountType() + " #" + account.getAccountNumber() + ": $" + account.getBalance());
-            totalBalance = totalBalance.add(account.getBalance());
-        }
-        return totalBalance;
-    }
-
-    public enum Tier {
-        Bronze,
-        Silver,
-        Gold,
-        Platinum
-    }
+//    public BigDecimal getTotalBalance() {
+//        BigDecimal totalBalance = BigDecimal.ZERO;
+//        for (Account account : this.userAccounts) {
+//            System.out.println(account.getAccountType() + " #" + account.getAccountNumber() + ": $" + account.getBalance());
+//            totalBalance = totalBalance.add(account.getBalance());
+//        }
+//        return totalBalance;
+//    }
+//
+//    public enum Tier {
+//        Bronze,
+//        Silver,
+//        Gold,
+//        Platinum
+//    }
 
 //    public void setTier() {
 //        if (this.getTotalBalance().compareTo(new BigDecimal("5000")) < 0) {

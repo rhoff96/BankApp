@@ -7,7 +7,8 @@ DROP TABLE IF EXISTS customer;
 CREATE TABLE customer (
 	customer_id SERIAL PRIMARY KEY,
 	name varchar(50) NOT NULL,
-	password varchar(50) UNIQUE
+	password varchar(50) UNIQUE,
+	last_login timestamp DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE account (
@@ -20,20 +21,23 @@ CREATE TABLE account (
 CREATE TABLE transaction (
 	transaction_id SERIAL PRIMARY KEY,
 	time timestamp NOT NULL,
-	customer_id int NOT NULL,
 	account_number int NOT NULL,
 	previous_balance money NOT NULL,
 	amount money NOT NULL,
-	CONSTRAINT FK_transaction_customer FOREIGN KEY (customer_id ) REFERENCES customer(customer_id),
 	CONSTRAINT FK_transaction_account FOREIGN KEY (account_number) REFERENCES account(account_number)
 );
 
-INSERT INTO customer(name, password) VALUES ('Russell Hoffman','admin');
+INSERT INTO customer(name, password) VALUES ('Russell Hoffman','admin'); --customer #1
+INSERT INTO customer(name, password) VALUES ('Test Customer','testpassword'); -- customer #2
 
-INSERT INTO account(customer_id, type) VALUES (1, 'Checking');
-INSERT INTO account(customer_id, type) VALUES (1, 'Savings');
+INSERT INTO account(customer_id, type) VALUES (1, 'Checking');--account # 1
+INSERT INTO account(customer_id, type) VALUES (1, 'Savings'); -- account #2
+INSERT INTO account(customer_id, type) VALUES (2, 'Checking'); -- account #3
+INSERT INTO account(customer_id, type) VALUES (2, 'Savings'); -- account #4
 
-INSERT INTO transaction(time, customer_id, account_number, previous_balance, amount) VALUES ('2023-10-25 05:00:00',1,1,100,10);
-INSERT INTO transaction(time, customer_id, account_number, previous_balance, amount) VALUES ('2023-11-20 12:00:00',1,2,50,200);
+INSERT INTO transaction(time, account_number, previous_balance, amount) VALUES ('2012-10-25 00:00:00',1,100,10.0);
+INSERT INTO transaction(time, account_number, previous_balance, amount) VALUES ('2015-11-20 00:00:00',2,50,200.0);
+INSERT INTO transaction(time, account_number, previous_balance, amount) VALUES ('2019-09-15 00:00:00',3,300.0,50.0);
+INSERT INTO transaction(time, account_number, previous_balance, amount) VALUES ('2023-01-01 00:00:00',4,50.0, 200.0);
 
 COMMIT;

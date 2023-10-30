@@ -2,34 +2,34 @@ package org.example;
 
 import java.math.BigDecimal;
 
-public class Account {
-    private int accountNumber;
-    private int customerId;
-    private final String accountType;
-    private BigDecimal balance;
-    private UserInterface ui;
-
-    public Account(String accountType, int customerId) {
-        this.accountType = accountType;
-        this.customerId = customerId;
-    }
-
-    public int getAccountNumber() {
-        return accountNumber;
-    }
-
-    public String getAccountType() {
-        return accountType;
-    }
-
-    public void setBalance(BigDecimal balance) {
-        this.balance = balance;
-    }
-
-    public BigDecimal deposit(BigDecimal bd) {
-        this.setBalance(this.getBalance().add(bd));
-        return this.getBalance();
-    }
+//public class Account {
+//    private int accountNumber;
+//    private int customerId;
+//    private final String accountType;
+//    private BigDecimal balance;
+//    private UserInterface ui;
+//
+//    public Account(String accountType, int customerId) {
+//        this.accountType = accountType;
+//        this.customerId = customerId;
+//    }
+//
+//    public int getAccountNumber() {
+//        return accountNumber;
+//    }
+//
+//    public String getAccountType() {
+//        return accountType;
+//    }
+//
+//    public void setBalance(BigDecimal balance) {
+//        this.balance = balance;
+//    }
+//
+//    public BigDecimal deposit(BigDecimal bd) {
+//        this.setBalance(this.getBalance().add(bd));
+//        return this.getBalance();
+//    }
 
 //    public BigDecimal withdraw(BigDecimal bd) {
 //        BigDecimal tempBalance = this.getBalance();
@@ -76,13 +76,13 @@ public class Account {
 //        return accountTo;
 //
 //    }
-
-    public BigDecimal getBalance() {
-        return this.balance;
-    }
+//
+//    public BigDecimal getBalance() {
+//        return this.balance;
+//    }
 
 //    @Override
 //    public String toString() {
 //        return this.accountType + " #" + this.getAccountNumber();
 //    }
-}
+//}

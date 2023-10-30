@@ -33,7 +33,7 @@ public class JdbcCustomerDaoTests extends BaseDaoTests {
     }
 
     @Test
-    public void get_customer_by_valid_name_paswword_returns_customer() {
+    public void get_customer_by_valid_name_password_returns_customer() {
         Customer retrieved = testCd.getCustomerByNameAndPassword("Russell Hoffman", "admin");
         Assert.assertEquals("Valid name and password should return customer", CUSTOMER_1, retrieved);
     }
@@ -89,7 +89,7 @@ public class JdbcCustomerDaoTests extends BaseDaoTests {
 
     }
     @Test
-    public void when_valid_customer_get_customer_by_id_returns_all_accounts(){
+    public void when_valid_customer_then_get_customer_by_id_returns_all_accounts(){
         Account account1 = new Account(1,1, "Checking");
         Account account2 = new Account(2,1, "Savings");
         List<Account> expected = new ArrayList<>();

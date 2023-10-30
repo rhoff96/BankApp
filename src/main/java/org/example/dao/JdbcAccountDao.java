@@ -23,18 +23,23 @@ public class JdbcAccountDao implements AccountDao {
         final String sql = "SELECT account_number, customer_id, type\n" +
                 "FROM account\n" +
                 "WHERE account_number = ?;";
-        final String sql2 = "SELECT SUM(previous_balance + amount) AS account_balance " +
+        final String sql2 = "SELECT SUM(amount) AS account_balance " +
                 "FROM transaction WHERE account_number = ?;";
         try {
             SqlRowSet results = jdbcTemplate.queryForRowSet(sql, accountNumber);
-            BigDecimal balance = jdbcTemplate.queryForObject(sql2, BigDecimal.class,accountNumber);
+            BigDecimal balance = jdbcTemplate.queryForObject(sql2, BigDecimal.class, accountNumber);
             if (results.next()) {
                 account = new Account();
                 account.setAccountNumber(results.getInt("account_number"));
                 account.setCustomerId(results.getInt("customer_id"));
                 account.setAccountType(results.getString("type"));
-                account.setAccountBalance(balance);
-            }
+                if (balance == null) {
+                    account.setAccountBalance(BigDecimal.ZERO);
+                } else {
+                    account.setAccountBalance(balance);
+
+
+                }            }
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database");
         }
@@ -46,7 +51,7 @@ public class JdbcAccountDao implements AccountDao {
         Account newAccount;
         final String sql = "INSERT INTO account(customer_id, type) VALUES (?,?) RETURNING account_number;";
         try {
-            int newAccountId = jdbcTemplate.queryForObject(sql, int.class, account.getCustomerId(),account.getAccountType());
+            int newAccountId = jdbcTemplate.queryForObject(sql, int.class, account.getCustomerId(), account.getAccountType());
             newAccount = getAccountById(newAccountId);
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database");
@@ -61,9 +66,9 @@ public class JdbcAccountDao implements AccountDao {
         Account updatedAccount;
         final String sql = "UPDATE account\n" +
                 "SET customer_id = ?, type = ?\n" +
-                "WHERE customer_id = ?;";
+                "WHERE account_number = ?;";
         try {
-            int numberOfRows = jdbcTemplate.update(sql, account.getCustomerId(), account.getAccountType(),account.getCustomerId());
+            int numberOfRows = jdbcTemplate.update(sql, account.getCustomerId(), account.getAccountType(), account.getAccountNumber());
             if (numberOfRows == 0) {
                 throw new DaoException("Zeros rows affected, expected at least one");
             } else {

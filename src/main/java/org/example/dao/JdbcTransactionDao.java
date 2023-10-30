@@ -7,9 +7,12 @@ import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import javax.sql.DataSource;
+import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.List;
 
 public class JdbcTransactionDao implements TransactionDao {
@@ -23,7 +26,7 @@ public class JdbcTransactionDao implements TransactionDao {
     @Override
     public Transaction getTransactionById(int transactionId) {
         Transaction transaction = null;
-        final String sql = "SELECT transaction_id, time, customer_id, account_number, previous_balance, amount\n" +
+        final String sql = "SELECT transaction_id, time, account_number, previous_balance, amount\n" +
                 "FROM transaction\n" +
                 "WHERE transaction_id = ?;";
         try {
@@ -39,12 +42,12 @@ public class JdbcTransactionDao implements TransactionDao {
 
     @Override
     public Transaction createTransaction(Transaction transaction) {
-        Transaction newTransaction = null;
-        final String sql = "INSERT INTO transaction (time, previous_balance, customer_id, account_number, amount) \" +\n" +
-                "                     \"VALUES (?, ?, ?, ?, ?) RETURNING transaction_id;";
+        Transaction newTransaction;
+        final String sql = "INSERT INTO transaction (time, previous_balance, account_number, amount) " +
+                "VALUES (?, ?, ?, ?) RETURNING transaction_id;";
         try {
             int newTransactionId = jdbcTemplate.queryForObject(sql, int.class,transaction.getTime(),
-                    transaction.getPreviousBalance(),transaction.getCustomerId(),
+                    transaction.getPreviousBalance(),
                     transaction.getAccountNumber(),transaction.getAmount());
             newTransaction = getTransactionById(newTransactionId);
         } catch (CannotGetJdbcConnectionException e) {
@@ -58,13 +61,16 @@ public class JdbcTransactionDao implements TransactionDao {
 
     @Override
     public List<Transaction> getTransactionsByCustomerId(int customerId) {
-        List<Transaction> transactions = null;
-        final String sql = "SELECT transaction_id, time, customer_id, account_number, previous_balance, amount\n" +
-                "FROM transaction\n" +
-                "WHERE customer_id = ?;";
+        List<Transaction> transactions = new ArrayList<>();
+        final String sql = "SELECT transaction_id, time, a.account_number, previous_balance, amount \n" +
+                "FROM transaction t\n" +
+                "INNER JOIN account a ON t.account_number = a.account_number\n" +
+                "INNER JOIN customer c ON c.customer_id = a.customer_id\n" +
+                "WHERE c.customer_id = ?\n" +
+                "ORDER BY transaction_id DESC;";
         try {
             SqlRowSet results = jdbcTemplate.queryForRowSet(sql, customerId);
-            if (results.next()) {
+            while (results.next()) {
                 transactions.add(mapRowToTransaction(results));
             }
         } catch (CannotGetJdbcConnectionException e) {
@@ -92,9 +98,8 @@ public class JdbcTransactionDao implements TransactionDao {
         Transaction transaction = new Transaction();
         transaction.setAccountNumber(rowSet.getInt("account_number"));
         transaction.setAmount(rowSet.getBigDecimal("amount"));
-        transaction.setCustomerId(rowSet.getInt("customer_id"));
         Timestamp timestamp = rowSet.getTimestamp("time");
-        transaction.setTime(LocalDateTime.ofInstant(timestamp.toInstant(), ZoneOffset.ofHours(-4)));
+        transaction.setTime(Timestamp.from(Instant.now()));
         transaction.setTransactionId(rowSet.getInt("transaction_id"));
         transaction.setPreviousBalance(rowSet.getBigDecimal("previous_balance"));
         return transaction;
