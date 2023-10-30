@@ -3,6 +3,7 @@ package org.example.model;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Transaction {
     private Timestamp time;
@@ -78,6 +79,13 @@ public class Transaction {
             return false;
         }
         return this.getTransactionId() == other.getTransactionId();
+
+    }
+
+    @Override
+    public String toString() {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        return this.getTime().toLocalDateTime().format(dtf) + " Account #"+ this.getAccountNumber() + " $"+ this.getAmount();
 
     }
 }

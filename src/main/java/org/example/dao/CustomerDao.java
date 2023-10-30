@@ -61,6 +61,14 @@ public interface CustomerDao {
      */
     public Customer getCustomerByNameAndPassword(String name, String password);
 
+    /**
+     * Finds customers with a given password
+     * @param password
+     * @return a list of customer objects
+     * @throws DaoException if an error occurs
+     */
+    //public List<Customer> getCustomersByPassword(String password);
+
 }
 
 

@@ -26,6 +26,7 @@ public class Session {
     private AccountDao ad;
     private TransactionDao td;
     private int withdrawalCounter = 0;
+    private String accountType;
 
 
     public Session(UserInterface ui) {
@@ -40,33 +41,8 @@ public class Session {
         cd = new JdbcCustomerDao(dataSource);
         ad = new JdbcAccountDao(dataSource);
         td = new JdbcTransactionDao(dataSource);
-        welcome();
-
-    }
-
-    public Customer welcome() {
         printOpening();
-        while (true) {
-            ui.put("Please log in by entering your 'Firstname Lastname': ");
-            name = ui.getAlpha();
-            ui.put("Please enter your password: ");
-            password = ui.get();
-            currentCustomer = lookUpCustomer();
-            if (currentCustomer == null) {
-                ui.put("Access Denied. Username and Password do not match our records. " +
-                        "Please (T)ry again or (C)reate a new user profile: ");
-                String choice = ui.getAlpha();
-                if (choice.equalsIgnoreCase("C")) {
-                    currentCustomer = createCustomer();
-                    ui.put("Profile created. Welcome, "+ currentCustomer.getFirstName() + "!");
-                    customerIsNew = true;
-                    break;
-                }
-            } else {
-                break;
-            }
-        }
-        return currentCustomer;
+        welcome();
     }
 
     public void printOpening() {
@@ -84,11 +60,33 @@ public class Session {
         ui.put("-------------------------------------------------------------");
     }
 
+    public Customer welcome() {
+        while (true) {
+            ui.put("Please log in by entering your 'Firstname Lastname': ");
+            name = ui.getAlpha();
+            ui.put("Please enter your password: ");
+            password = ui.getPassword();
+            currentCustomer = lookUpCustomer();
+            if (currentCustomer == null) {
+                ui.put("Access Denied. Please (T)ry again or (C)reate a new user profile: ");
+                String choice = ui.getAlpha();
+                if (choice.equalsIgnoreCase("C")) {
+                    currentCustomer = createCustomer();
+                    ui.put("Profile created. Welcome, " + currentCustomer.getFirstName() + "!");
+                    customerIsNew = true;
+                    break;
+                }
+            } else {
+                break;
+            }
+        }
+        return currentCustomer;
+    }
+
     public String promptForAccountType() {
-        String accountType;
         ui.put("Would you like to open a" +
                 " (C)hecking or (S)avings account today? ");
-        accountType = ui.getAlpha().toLowerCase();
+        this.accountType = ui.getAlpha().toLowerCase();
         return accountType;
     }
 
@@ -108,9 +106,9 @@ public class Session {
         return currentCustomer;
     }
 
-    public Account createOrSelectAccount(boolean customerIsNew, String accountType) {
+    public Account createOrSelectAccount(boolean customerIsNew) {
         if (customerIsNew) {
-            currentAccount = createAccount(accountType);
+            currentAccount = createAccount();
         } else {
             DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             System.out.printf("Welcome, %s. Your current Tier is %s.\nLast Login: %s\n",
@@ -122,7 +120,8 @@ public class Session {
         return currentAccount;
     }
 
-    public Account createAccount(String accountType) {
+    public Account createAccount() {
+        promptForAccountType();
         switch (accountType) {
             case "c":
                 accountType = "Checking";
@@ -171,6 +170,10 @@ public class Session {
         boolean continueSession = true;
         while (continueSession) {
             ui.put("Current account is " + currentAccount.toString());
+            ui.put("Previous transactions: ");
+            for (Transaction transaction : td.getTransactionsByAccountNumber(currentAccount.getAccountNumber())) {
+                ui.put(transaction.toString());
+            }
             if (this.cd.getAccountsByCustomerId(currentCustomer.getCustomerId()).size() == 1) {
                 ui.put("Would you like to (W)ithdraw funds, (D)eposit funds, (G)et balance, or (O)pen another account? ");
             } else {
@@ -179,9 +182,10 @@ public class Session {
             }
             String choice = ui.getAlpha().toLowerCase();
             transactionAction(choice);
+            ui.put("Current account is " + currentAccount.toString());
             continueSession = promptToContinue();
         }
-//        currentCustomer.setTier();
+        currentCustomer.setTier();
         ui.put("Banking session complete.");
     }
 
@@ -232,7 +236,7 @@ public class Session {
                 transfer(transferTo, amount);
                 return;
             case "o":
-                currentAccount = this.createAccount(promptForAccountType());
+                currentAccount = this.createAccount();
                 return;
             case "l":
                 displayAvailableAccounts();
@@ -275,7 +279,7 @@ public class Session {
         ui.put("Available accounts to transfer to: ");
         List<Account> accounts = cd.getAccountsByCustomerId(currentCustomer.getCustomerId());
         for (Account account : accounts) {
-            if (account != currentAccount)
+            if (account.getAccountNumber() != currentAccount.getAccountNumber())
                 ui.put(account.toString());
         }
         Account accountTo;
@@ -314,8 +318,7 @@ public class Session {
         } else {
             processTransaction(bigDebit.multiply(BigDecimal.valueOf(-1)));
         }
-        BigDecimal newBalance = currentAccount.getAccountBalance();
-        return newBalance;
+        return currentAccount.getAccountBalance();
     }
 
     public BigDecimal savingsWithdraw(BigDecimal bigDebit) {

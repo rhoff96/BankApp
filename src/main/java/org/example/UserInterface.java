@@ -13,8 +13,13 @@ public class UserInterface {
         System.out.println(message);
     }
 
-    public String get() {
-        return userInput.nextLine();
+    public String getPassword() {
+        String input = userInput.nextLine();
+        while (input.length() < 12) {
+            System.out.println("Password must be at least 12 characters");
+            input = userInput.nextLine();
+        }
+        return input;
     }
 
     public String getAlpha() {
@@ -25,19 +30,21 @@ public class UserInterface {
         }
         return response;
     }
-    public int getInt(){
+
+    public int getInt() {
         String response = userInput.nextLine();
-        while (response.equals("")) {
-            System.out.println("Please enter a numerical value");
+        while (response.equals("") || response.contains(".")) {
+            System.out.println("Please enter an integer value");
             response = userInput.nextLine();
         }
         while (Pattern.compile("[a-zA-Z\\s]*").matcher(response).matches()) {
-            System.out.println("Please enter a numerical value");
+            System.out.println("Please enter a integer value");
             response = userInput.nextLine();
         }
         return Integer.parseInt(response);
 
     }
+
     public BigDecimal getBigDec() {
         String response = userInput.nextLine();
         while (!Pattern.compile("^[+]?\\d+([.]\\d+)?$").matcher(response).matches()) {

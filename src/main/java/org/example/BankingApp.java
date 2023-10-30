@@ -13,7 +13,7 @@ public class BankingApp {
         if (session.customerIsNew) {
             accountType = session.promptForAccountType();
         }
-        session.createOrSelectAccount(session.customerIsNew, accountType);
+        session.createOrSelectAccount(session.customerIsNew);
         session.transact();
     }
 

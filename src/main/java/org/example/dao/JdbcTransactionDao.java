@@ -7,11 +7,7 @@ import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import javax.sql.DataSource;
-import java.sql.Time;
 import java.sql.Timestamp;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,9 +42,9 @@ public class JdbcTransactionDao implements TransactionDao {
         final String sql = "INSERT INTO transaction (time, previous_balance, account_number, amount) " +
                 "VALUES (?, ?, ?, ?) RETURNING transaction_id;";
         try {
-            int newTransactionId = jdbcTemplate.queryForObject(sql, int.class,transaction.getTime(),
+            int newTransactionId = jdbcTemplate.queryForObject(sql, int.class, transaction.getTime(),
                     transaction.getPreviousBalance(),
-                    transaction.getAccountNumber(),transaction.getAmount());
+                    transaction.getAccountNumber(), transaction.getAmount());
             newTransaction = getTransactionById(newTransactionId);
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database");
@@ -81,13 +77,16 @@ public class JdbcTransactionDao implements TransactionDao {
 
     @Override
     public List<Transaction> getTransactionsByAccountNumber(int accountNumber) {
-        List<Transaction> transactions = null;
-        final String sql = "SELECT transaction_id, time, customer_id, account_number, previous_balance, amount\n" +
+        List<Transaction> transactions = new ArrayList<>();
+        final String sql = "SELECT transaction_id, time, account_number, previous_balance, amount\n" +
                 "FROM transaction\n" +
-                "WHERE account_number = ?;";
+                "WHERE account_number = ?" +
+                "ORDER BY transaction_id DESC;";
         try {
             SqlRowSet results = jdbcTemplate.queryForRowSet(sql, accountNumber);
-            transactions.add(mapRowToTransaction(results));
+            while (results.next()) {
+                transactions.add(mapRowToTransaction(results));
+            }
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database");
         }
@@ -99,7 +98,7 @@ public class JdbcTransactionDao implements TransactionDao {
         transaction.setAccountNumber(rowSet.getInt("account_number"));
         transaction.setAmount(rowSet.getBigDecimal("amount"));
         Timestamp timestamp = rowSet.getTimestamp("time");
-        transaction.setTime(Timestamp.from(Instant.now()));
+        transaction.setTime(timestamp);
         transaction.setTransactionId(rowSet.getInt("transaction_id"));
         transaction.setPreviousBalance(rowSet.getBigDecimal("previous_balance"));
         return transaction;
