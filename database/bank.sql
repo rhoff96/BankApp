@@ -20,13 +20,13 @@ CREATE TABLE transaction (
 	transaction_id SERIAL PRIMARY KEY,
 	time timestamp NOT NULL,
 	account_number int NOT NULL,
-	previous_balance money NOT NULL,
-	amount money NOT NULL,
+	previous_balance numeric NOT NULL,
+	amount numeric NOT NULL,
 	CONSTRAINT FK_transaction_account FOREIGN KEY (account_number) REFERENCES account(account_number)
 );
 
 
-INSERT INTO customer(name, password) VALUES ('Russell Hoffman','admin');
+INSERT INTO customer(name, password) VALUES ('Russell Hoffman','adminpassword');
 
 INSERT INTO account(customer_id, type) VALUES (1, 'Checking');
 INSERT INTO account(customer_id, type) VALUES (1, 'Savings');

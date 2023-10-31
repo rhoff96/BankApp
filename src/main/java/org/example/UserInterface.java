@@ -1,6 +1,7 @@
 package org.example;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
@@ -51,7 +52,9 @@ public class UserInterface {
             System.out.println("Please enter a positive numerical value");
             response = userInput.nextLine();
         }
-        return new BigDecimal(response);
+        BigDecimal bigResponse = new BigDecimal(response);
+        MathContext m = new MathContext(3);
+        return bigResponse.round(m);
     }
 
 }

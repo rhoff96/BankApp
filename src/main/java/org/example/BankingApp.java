@@ -1,7 +1,6 @@
 package org.example;
 
 
-
 public class BankingApp {
 
 
@@ -9,11 +8,11 @@ public class BankingApp {
         UserInterface ui = new UserInterface();
         Session session = new Session(ui);
         session.setup();
-        String accountType = null;
         if (session.customerIsNew) {
-            accountType = session.promptForAccountType();
+            session.promptForAccountType();
+        } else {
+            session.greetAndSelect();
         }
-        session.createOrSelectAccount(session.customerIsNew);
         session.transact();
     }
 

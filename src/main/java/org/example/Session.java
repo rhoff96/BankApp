@@ -83,11 +83,15 @@ public class Session {
         return currentCustomer;
     }
 
-    public String promptForAccountType() {
+    public void promptForAccountType() {
         ui.put("Would you like to open a" +
                 " (C)hecking or (S)avings account today? ");
-        this.accountType = ui.getAlpha().toLowerCase();
-        return accountType;
+        accountType = ui.getAlpha().toLowerCase();
+        while ((!(accountType.equalsIgnoreCase("c") || accountType.equalsIgnoreCase("s")))){
+            ui.put("Please enter C or S");
+            accountType = ui.getAlpha().toLowerCase();
+        }
+        createAccount(accountType);
     }
 
     public Customer createCustomer() {
@@ -106,45 +110,41 @@ public class Session {
         return currentCustomer;
     }
 
-    public Account createOrSelectAccount(boolean customerIsNew) {
-        if (customerIsNew) {
-            currentAccount = createAccount();
-        } else {
-            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-            System.out.printf("Welcome, %s. Your current Tier is %s.\nLast Login: %s\n",
-                    currentCustomer.getFirstName(), currentCustomer.getTier(), currentCustomer.getLastLogin().format(dtf));
-            currentCustomer.setLastLogin(LocalDateTime.now());
-            cd.updateCustomer(currentCustomer);
-            currentAccount = selectAccount();
+    public Account greetAndSelect() {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        System.out.printf("Welcome, %s. Your current Tier is %s.\nLast Login: %s\n",
+                currentCustomer.getFirstName(), currentCustomer.getTier(), currentCustomer.getLastLogin().format(dtf));
+        currentCustomer.setLastLogin(LocalDateTime.now());
+        cd.updateCustomer(currentCustomer);
+        currentAccount = displayAllAccounts();
+
+        return currentAccount;
+    }
+
+    public Account createAccount(String accountType) {
+        if (accountType.equalsIgnoreCase("c")) {
+            accountType = "Checking";
+            Account checking = new Account();
+            checking.setAccountType(accountType);
+            checking.setCustomerId(currentCustomer.getCustomerId());
+            currentAccount = ad.createAccount(checking);
+        } else if (accountType.equalsIgnoreCase("s")) {
+            accountType = "Savings";
+            Account savings = new Account();
+            savings.setAccountType(accountType);
+            savings.setCustomerId(currentCustomer.getCustomerId());
+            currentAccount = ad.createAccount(savings);
         }
         return currentAccount;
     }
 
-    public Account createAccount() {
-        promptForAccountType();
-        switch (accountType) {
-            case "c":
-                accountType = "Checking";
-                Account checking = new Account();
-                checking.setAccountType(accountType);
-                checking.setCustomerId(currentCustomer.getCustomerId());
-                currentAccount = ad.createAccount(checking);
-            case "s":
-                accountType = "Savings";
-                Account savings = new Account();
-                savings.setAccountType(accountType);
-                savings.setCustomerId(currentCustomer.getCustomerId());
-                currentAccount = ad.createAccount(savings);
-        }
-        return currentAccount;
-    }
-
-    public Account selectAccount() {
+    public Account displayAllAccounts() {
         ui.put("Please enter the account number to access: ");
         List<Account> accounts = cd.getAccountsByCustomerId(currentCustomer.getCustomerId());
         for (Account account : accounts) {
             ui.put(account.toString());
         }
+        ui.put("Total Balance: $" + currentCustomer.getTotalBalance());
         while (true) {
             int intSelection = ui.getInt();
             for (Account account : accounts) {
@@ -236,13 +236,11 @@ public class Session {
                 transfer(transferTo, amount);
                 return;
             case "o":
-                currentAccount = this.createAccount();
+                this.promptForAccountType();
                 return;
             case "l":
-                displayAvailableAccounts();
-                return;
             case "s":
-                this.selectAccount();
+                displayAllAccounts();
                 return;
             default:
                 ui.put("Please select an option from the list.");
@@ -251,12 +249,12 @@ public class Session {
         ui.put("Current balance is $" + currentAccount.getAccountBalance());
     }
 
-    private void displayAvailableAccounts() {
-        for (Account account : cd.getAccountsByCustomerId(currentCustomer.getCustomerId())) {
-            ui.put(account.toString());
-        }
-        ui.put("Total Balance: $" + currentCustomer.getTotalBalance());
-    }
+//    private void displayAvailableAccounts() {
+//        for (Account account : cd.getAccountsByCustomerId(currentCustomer.getCustomerId())) {
+//            ui.put(account.toString());
+//        }
+//        ui.put("Total Balance: $" + currentCustomer.getTotalBalance());
+//    }
 
 
     private BigDecimal promptForTransferAmount() {
@@ -283,9 +281,9 @@ public class Session {
                 ui.put(account.toString());
         }
         Account accountTo;
-        ui.put("Please enter the account number to transfer to: ");
         int acctNumToTransferTo;
         while (true) {
+            ui.put("Please enter the account number to transfer to: ");
             acctNumToTransferTo = ui.getInt();
             for (Account account : accounts) {
                 if (account.getAccountNumber() == acctNumToTransferTo) {
