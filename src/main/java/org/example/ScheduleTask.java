@@ -19,17 +19,54 @@ import java.util.TimerTask;
 
 public class ScheduleTask {
 
+    private JdbcAccountDao accountDao;
+    private JdbcCustomerDao customerDao;
+    private JdbcTransactionDao transactionDao;
+
+    public void setup(){
+        BasicDataSource dataSource = new BasicDataSource();
+        dataSource.setUrl("jdbc:postgresql://localhost:5432/Bank");
+        dataSource.setUsername("postgres");
+        dataSource.setPassword("postgres1");
+        accountDao = new JdbcAccountDao(dataSource);
+        customerDao = new JdbcCustomerDao(dataSource);
+        transactionDao = new JdbcTransactionDao(dataSource);
+
+
+    }
+    public void chargeMaintenanceFee(){
+        TimerTask repeatedTask = new TimerTask(){
+
+            public void run(){
+                setup();
+                List<Account> accounts = accountDao.getAllAccounts();
+                for (Account account: accounts){
+                    boolean belowMinimum =  (account.getAccountBalance().compareTo(new BigDecimal("500.00")) < 0);
+                    if (account.getAccountType().equals("Savings") && belowMinimum){
+                        Transaction transaction = new Transaction();
+                        transaction.setTime(Timestamp.valueOf(LocalDateTime.now()));
+                        transaction.setPreviousBalance(account.getAccountBalance());
+                        transaction.setAccountNumber(account.getAccountNumber());
+                        transaction.setAmount(new BigDecimal("-15.00"));
+
+                        transactionDao.createTransaction(transaction);
+                    }
+                }
+            }
+        };
+        Timer timer = new Timer("Timer");
+
+        long delay = 1000L;
+        long period = 1000L * 4L;
+        //long period = 1000L * 60L * 60L * 24L * 30L;
+        timer.scheduleAtFixedRate(repeatedTask, delay, period);
+    }
+
 
     public void accrueInterest() {
         TimerTask repeatedTask = new TimerTask() {
             public void run() {
-                BasicDataSource dataSource = new BasicDataSource();
-                dataSource.setUrl("jdbc:postgresql://localhost:5432/Bank");
-                dataSource.setUsername("postgres");
-                dataSource.setPassword("postgres1");
-                JdbcAccountDao accountDao = new JdbcAccountDao(dataSource);
-                JdbcCustomerDao customerDao = new JdbcCustomerDao(dataSource);
-                JdbcTransactionDao transactionDao = new JdbcTransactionDao(dataSource);
+                setup();
                 List<Account> accounts = accountDao.getAllAccounts();
 
                 BigDecimal interestRate = null;

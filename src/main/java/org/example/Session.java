@@ -43,6 +43,7 @@ public class Session {
         td = new JdbcTransactionDao(dataSource);
         ScheduleTask scheduler = new ScheduleTask();
         scheduler.accrueInterest();
+        scheduler.chargeMaintenanceFee();
         printOpening();
         welcome();
     }
@@ -50,7 +51,7 @@ public class Session {
     public void printOpening() {
         ui.put("             Welcome to Tech Elevator Bank!\n");
         ui.put("===$$=================Bank Policies===================$$===\n");
-        ui.put("1. Savings accounts must maintain a minimum balance of $100. " +
+        ui.put("1. Savings accounts must maintain a minimum balance of $500. " +
                 "Withdrawals below this balance will incur a $10 fee, as well as a monthly maintenance fee of $15.");
         ui.put("2. Savings accounts may only have two withdrawals per banking session.");
         ui.put("3. Banking Loyalty tier structure: ");
@@ -58,7 +59,7 @@ public class Session {
         ui.put("    -Silver: Total Balance of all accounts below $10000. Savings interest rate: 3%");
         ui.put("    -Gold: Total Balance of all accounts below $25000. Savings interest rate: 4%");
         ui.put("    -Platinum: Total Balance of all accounts at or above $25000. Savings interest rate: 5%");
-        ui.put("Tiers are calculated at the conclusion of each banking session.");
+        ui.put("4. Interest is accrued monthly");
         ui.put("-------------------------------------------------------------");
     }
 
@@ -325,7 +326,7 @@ public class Session {
 
     public BigDecimal savingsWithdraw(BigDecimal bigDebit) {
         final int SAVINGS_WITHDRAWAL_MAX = 2;
-        final BigDecimal MINIMUM_BALANCE = new BigDecimal(100);
+        final BigDecimal MINIMUM_BALANCE = new BigDecimal(500);
         final BigDecimal OVERDRAFT_FEE = new BigDecimal(10);
 
         if (withdrawalCounter == SAVINGS_WITHDRAWAL_MAX) {

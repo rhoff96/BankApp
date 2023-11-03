@@ -1,16 +1,8 @@
 package org.example;
 
 
-import org.example.model.Transaction;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 
 public class BankingApp {
-
-
 
 
     public void run() {
