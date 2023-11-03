@@ -23,7 +23,7 @@ public class ScheduleTask {
     private JdbcCustomerDao customerDao;
     private JdbcTransactionDao transactionDao;
 
-    public void setup(){
+    public void setup() {
         BasicDataSource dataSource = new BasicDataSource();
         dataSource.setUrl("jdbc:postgresql://localhost:5432/Bank");
         dataSource.setUsername("postgres");
@@ -34,15 +34,16 @@ public class ScheduleTask {
 
 
     }
-    public void chargeMaintenanceFee(){
-        TimerTask repeatedTask = new TimerTask(){
 
-            public void run(){
+    public void chargeMaintenanceFee() {
+        TimerTask repeatedTask = new TimerTask() {
+
+            public void run() {
                 setup();
                 List<Account> accounts = accountDao.getAllAccounts();
-                for (Account account: accounts){
-                    boolean belowMinimum =  (account.getAccountBalance().compareTo(new BigDecimal("500.00")) < 0);
-                    if (account.getAccountType().equals("Savings") && belowMinimum){
+                for (Account account : accounts) {
+                    boolean belowMinimum = (account.getAccountBalance().compareTo(new BigDecimal("500.00")) < 0);
+                    if (account.getAccountType().equals("Savings") && belowMinimum) {
                         Transaction transaction = new Transaction();
                         transaction.setTime(Timestamp.valueOf(LocalDateTime.now()));
                         transaction.setPreviousBalance(account.getAccountBalance());
@@ -52,13 +53,14 @@ public class ScheduleTask {
                         transactionDao.createTransaction(transaction);
                     }
                 }
+                System.out.println("Maintenance fee assessed on " + LocalDateTime.now());
             }
         };
         Timer timer = new Timer("Timer");
 
         long delay = 1000L;
-        long period = 1000L * 4L;
-        //long period = 1000L * 60L * 60L * 24L * 30L;
+        long period = 1000L * 8L;
+        //long period = (1000L * 60L * 60L * 24L * 365L)/12;
         timer.scheduleAtFixedRate(repeatedTask, delay, period);
     }
 
@@ -72,43 +74,45 @@ public class ScheduleTask {
                 BigDecimal interestRate = null;
 
                 for (Account account : accounts) {
-                    Customer customer = customerDao.getCustomerById(account.getCustomerId());
-                    Customer.Tier tier = customer.getTier();
-                    if (tier == Customer.Tier.Bronze) {
-                        interestRate = new BigDecimal("0.02");
-                    }
-                    if (tier == Customer.Tier.Silver) {
-                        interestRate = new BigDecimal("0.03");
-                    }
-                    if (tier == Customer.Tier.Gold) {
-                        interestRate = new BigDecimal("0.04");
-                    }
-                    if (tier == Customer.Tier.Platinum) {
-                        interestRate = new BigDecimal("0.05");
-                    }
+                    if (account.getAccountType().equals("Savings")) {
+                        Customer customer = customerDao.getCustomerById(account.getCustomerId());
+                        Customer.Tier tier = customer.getTier();
+                        if (tier == Customer.Tier.Bronze) {
+                            interestRate = new BigDecimal("0.02");
+                        }
+                        if (tier == Customer.Tier.Silver) {
+                            interestRate = new BigDecimal("0.03");
+                        }
+                        if (tier == Customer.Tier.Gold) {
+                            interestRate = new BigDecimal("0.04");
+                        }
+                        if (tier == Customer.Tier.Platinum) {
+                            interestRate = new BigDecimal("0.05");
+                        }
 
-                    BigDecimal currentBalance = account.getAccountBalance().setScale(2, RoundingMode.DOWN);
-                    assert interestRate != null;
-                    BigDecimal monthlyRate = interestRate.divide(new BigDecimal("12.00"), 20, RoundingMode.DOWN);
-                    BigDecimal interestAmount = currentBalance.multiply(monthlyRate);
-                    BigDecimal roundedAmount = interestAmount.setScale(2, RoundingMode.DOWN);
+                        BigDecimal currentBalance = account.getAccountBalance().setScale(2, RoundingMode.DOWN);
+                        assert interestRate != null;
+                        BigDecimal monthlyRate = interestRate.divide(new BigDecimal("12.00"), 20, RoundingMode.DOWN);
+                        BigDecimal interestAmount = currentBalance.multiply(monthlyRate);
+                        BigDecimal roundedAmount = interestAmount.setScale(2, RoundingMode.DOWN);
 
-                    Transaction transaction = new Transaction();
-                    transaction.setTime(Timestamp.valueOf(LocalDateTime.now()));
-                    transaction.setPreviousBalance(currentBalance);
-                    transaction.setAccountNumber(account.getAccountNumber());
-                    transaction.setAmount(roundedAmount);
+                        Transaction transaction = new Transaction();
+                        transaction.setTime(Timestamp.valueOf(LocalDateTime.now()));
+                        transaction.setPreviousBalance(currentBalance);
+                        transaction.setAccountNumber(account.getAccountNumber());
+                        transaction.setAmount(roundedAmount);
 
-                    transactionDao.createTransaction(transaction);
+                        transactionDao.createTransaction(transaction);
+                    }
+                    System.out.println("Interest accrued on " + LocalDate.now());
                 }
-                System.out.println("Task performed on " + LocalDate.now());
             }
         };
         Timer timer = new Timer("Timer");
 
         long delay = 1000L;
-        long period = 1000L * 4L;
-        //long period = 1000L * 60L * 60L * 24L * 30L;
+        long period = 1000L * 8L;
+        //long period = (1000L * 60L * 60L * 24L * 365L)/12;
         timer.scheduleAtFixedRate(repeatedTask, delay, period);
     }
 }

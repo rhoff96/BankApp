@@ -254,13 +254,6 @@ public class Session {
         ui.put("Current balance is $" + currentAccount.getAccountBalance());
     }
 
-//    private void displayAvailableAccounts() {
-//        for (Account account : cd.getAccountsByCustomerId(currentCustomer.getCustomerId())) {
-//            ui.put(account.toString());
-//        }
-//        ui.put("Total Balance: $" + currentCustomer.getTotalBalance());
-//    }
-
 
     private BigDecimal promptForTransferAmount() {
         BigDecimal transferBig;

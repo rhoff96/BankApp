@@ -68,21 +68,6 @@ public class JdbcCustomerDao implements CustomerDao {
         return customer;
     }
 
-//    public List<Customer> getCustomersByPassword(String password) {
-//        List<Customer> customers = new ArrayList<>();
-//        final String sql = "SELECT customer_id, name, password, last_login\" +\n" +
-//                "                \" FROM customer WHERE password = ?";
-//        try {
-//            SqlRowSet results = jdbcTemplate.queryForRowSet(sql, password);
-//            while (results.next()) {
-//                customers.add(mapRowToCustomer(results));
-//            }
-//        }  catch (CannotGetJdbcConnectionException e) {
-//            throw new DaoException("Unable to connect to server or database");
-//        }
-//        return customers;
-//    }
-
     @Override
     public Customer createCustomer(Customer customer) {
         Customer newCustomer;

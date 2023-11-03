@@ -3,8 +3,6 @@ package org.example.dao;
 import org.example.exception.DaoException;
 import org.example.model.Account;
 import org.example.model.Customer;
-
-import java.math.BigDecimal;
 import java.util.List;
 
 public interface CustomerDao {
@@ -47,7 +45,7 @@ public interface CustomerDao {
     /**
      * Get all accounts for a customer
      *
-     * @param customerId
+     * @param customerId of customer
      * @return a list of account objects
      * @throws DaoException if an error occurs
      */
@@ -59,15 +57,8 @@ public interface CustomerDao {
      * @return customer object
      * @throws DaoException if an error occurs
      */
-    public Customer getCustomerByNameAndPassword(String name, String password);
+    Customer getCustomerByNameAndPassword(String name, String password);
 
-    /**
-     * Finds customers with a given password
-     * @param password
-     * @return a list of customer objects
-     * @throws DaoException if an error occurs
-     */
-    //public List<Customer> getCustomersByPassword(String password);
 
 }
 

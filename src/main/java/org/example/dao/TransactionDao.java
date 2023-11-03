@@ -22,14 +22,14 @@ public interface TransactionDao {
     Transaction createTransaction(Transaction transaction);
     /**
      *Gets all transactions for a customer
-     * @param customerId
+     * @param customerId of customer
      * @return a list of transaction objects, ordered by date, newest to oldest.
      * @throws DaoException if an error occurs
      */
     List<Transaction> getTransactionsByCustomerId(int customerId);
     /**
      * Gets all transactions for an account
-     * @param accountNumber
+     * @param accountNumber of account
      * @return a list of transaction objects, ordered by date, newest to oldest.
      * @throws DaoException if an error occurs
      */
