@@ -7,7 +7,7 @@ public class Account {
     private int accountNumber;
     private int customerId;
     private String accountType;
-    private BigDecimal accountBalance = BigDecimal.ZERO;
+    private BigDecimal accountBalance;
 
     public void setAccountBalance(BigDecimal accountBalance) {
         this.accountBalance = accountBalance;

@@ -4,6 +4,7 @@ import org.example.exception.DaoException;
 import org.example.model.Account;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public interface AccountDao {
      /**
@@ -35,5 +36,6 @@ public interface AccountDao {
      * @throws DaoException if an error occurs
      */
     int deleteAccountById(int accountId);
+    List<Account> getAllAccounts();
 
 }

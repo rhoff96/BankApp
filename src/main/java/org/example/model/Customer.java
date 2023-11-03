@@ -76,6 +76,10 @@ public class Customer {
         Platinum
     }
     public void setTier() {
+        if (this.totalBalance == null) {
+            this.tier = Customer.Tier.Bronze;
+            return;
+        }
         if (this.totalBalance.compareTo(new BigDecimal("5000")) < 0) {
             this.tier = Customer.Tier.Bronze;
         } else if (this.totalBalance.compareTo(new BigDecimal("10000")) < 0) {

@@ -7,7 +7,6 @@ CREATE TABLE customer (
 	name varchar(50) NOT NULL,
 	password varchar(50) UNIQUE NOT NULL,
 	last_login timestamp DEFAULT CURRENT_TIMESTAMP
-);
 
 CREATE TABLE account (
 	account_number SERIAL PRIMARY KEY,

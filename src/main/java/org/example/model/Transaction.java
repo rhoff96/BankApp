@@ -82,10 +82,10 @@ public class Transaction {
 
     }
 
-    @Override
-    public String toString() {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        return this.getTime().toLocalDateTime().format(dtf) + " Account #"+ this.getAccountNumber() + " $"+ this.getAmount();
-
-    }
+//    @Override
+//    public String toString() {
+//        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+//        return this.getTime().toLocalDateTime().format(dtf) + " Account #"+ this.getAccountNumber() + " $"+ this.getAmount();
+//
+//    }
 }

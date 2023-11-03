@@ -15,7 +15,7 @@ public class SessionTests extends BaseDaoTests {
     private static final Customer CUSTOMER_2 = new Customer(2, "Mike Levy","test123");
     @Before
     public void setup(){
-       //  testCd = new JdbcCustomerDao(dataSource);
+         testCd = new JdbcCustomerDao(dataSource);
 
     }
     @Test
@@ -31,6 +31,16 @@ public class SessionTests extends BaseDaoTests {
     public void when_username_and_password_found_access_correct_customer(){
         Customer actual = testCd.getCustomerByNameAndPassword("Russell Hoffman","admin");
         Assert.assertEquals("If user is returning, return correct user", CUSTOMER_1,actual);
+    }
+    @Test
+    public void when_look_up_valid_customer_then_return_customer(){
+        s.setName("Russell Hoffman");
+        s.setPassword("admin");
+        Customer expected = new Customer();
+        expected.setName("Russell Hoffman");
+        expected.setPassword("admin");
+        Customer retrieved = s.lookUpCustomer();
+        Assert.assertEquals("Lookup valid customer should return customer",expected,retrieved);
     }
 
 }

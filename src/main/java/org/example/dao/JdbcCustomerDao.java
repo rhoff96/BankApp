@@ -31,10 +31,13 @@ public class JdbcCustomerDao implements CustomerDao {
                 "FROM transaction WHERE account_number IN (SELECT account_number FROM account WHERE customer_id = ?);";
         try {
             SqlRowSet results = jdbcTemplate.queryForRowSet(sql, customerId);
-            BigDecimal balance = jdbcTemplate.queryForObject(sql2, BigDecimal.class, customerId);
+            SqlRowSet balance = jdbcTemplate.queryForRowSet(sql2, customerId);
             if (results.next()) {
                 customer = mapRowToCustomer(results);
-                customer.setTotalBalance(balance);
+                if (balance.next()){
+                customer.setTotalBalance(balance.getBigDecimal("total_balance"));
+                }
+                customer.setTier();
             }
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database");
@@ -83,6 +86,7 @@ public class JdbcCustomerDao implements CustomerDao {
     @Override
     public Customer createCustomer(Customer customer) {
         Customer newCustomer;
+        if (customer.getName() == null || customer.getPassword() == null) return null;
         final String sql = "INSERT INTO customer(name, password) VALUES (?,?) RETURNING customer_id;";
         try {
             int newCustomerId = jdbcTemplate.queryForObject(sql, int.class, customer.getName(), customer.getPassword());
@@ -140,19 +144,20 @@ public class JdbcCustomerDao implements CustomerDao {
     public List<Account> getAccountsByCustomerId(int customerId) {
         List<Account> accounts = new ArrayList<>();
         final String sql1 = "SELECT account_number, customer_id, type FROM account WHERE customer_id = ?;";
+        final String sql2 = "SELECT SUM(amount) AS account_balance FROM transaction WHERE account_number = ?;";
         try {
             SqlRowSet results = jdbcTemplate.queryForRowSet(sql1, customerId);
             while (results.next()) {
-                final String sql2 = "SELECT SUM(amount) AS total_balance FROM transaction WHERE account_number = ?;";
-                BigDecimal accountBalance = jdbcTemplate.queryForObject(sql2, BigDecimal.class, results.getInt("account_number"));
+                SqlRowSet accountBalance = jdbcTemplate.queryForRowSet(sql2, results.getInt("account_number"));
                 Account account = new Account();
                 account.setAccountNumber(results.getInt("account_number"));
                 account.setCustomerId(results.getInt("customer_id"));
                 account.setAccountType(results.getString("type"));
-                if (accountBalance == null) {
+                if (accountBalance.next()){
+                    account.setAccountBalance(accountBalance.getBigDecimal("account_balance"));
+                }
+                if (account.getAccountBalance() == null){
                     account.setAccountBalance(BigDecimal.ZERO);
-                } else {
-                    account.setAccountBalance(accountBalance);
                 }
                 accounts.add(account);
             }

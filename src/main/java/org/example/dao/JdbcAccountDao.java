@@ -9,6 +9,8 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 
 import javax.sql.DataSource;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 public class JdbcAccountDao implements AccountDao {
     private final JdbcTemplate jdbcTemplate;
@@ -27,19 +29,19 @@ public class JdbcAccountDao implements AccountDao {
                 "FROM transaction WHERE account_number = ?;";
         try {
             SqlRowSet results = jdbcTemplate.queryForRowSet(sql, accountNumber);
-            BigDecimal balance = jdbcTemplate.queryForObject(sql2, BigDecimal.class, accountNumber);
+            SqlRowSet balance = jdbcTemplate.queryForRowSet(sql2, accountNumber);
             if (results.next()) {
                 account = new Account();
                 account.setAccountNumber(results.getInt("account_number"));
                 account.setCustomerId(results.getInt("customer_id"));
                 account.setAccountType(results.getString("type"));
-                if (balance == null) {
+                if (balance.next()){
+                    account.setAccountBalance(balance.getBigDecimal("account_balance"));
+                }
+                if (account.getAccountBalance() == null){
                     account.setAccountBalance(BigDecimal.ZERO);
-                } else {
-                    account.setAccountBalance(balance);
-
-
-                }            }
+                }
+            }
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database");
         }
@@ -94,5 +96,22 @@ public class JdbcAccountDao implements AccountDao {
             throw new DaoException("Data integrity violation", e);
         }
         return numberOfRows;
+    }
+
+    @Override
+    public List<Account> getAllAccounts() {
+        List<Account> accounts = new ArrayList<>();
+        final String sql = "SELECT account_number, customer_id, type\n" +
+                "FROM account;";
+        try {
+            SqlRowSet results = jdbcTemplate.queryForRowSet(sql);
+            while (results.next()) {
+                Account account = getAccountById(results.getInt("account_number"));
+                accounts.add(account);
+            }
+        } catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database", e);
+        }
+        return accounts;
     }
 }

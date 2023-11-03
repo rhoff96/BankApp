@@ -14,6 +14,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Timer;
 
 public class Session {
     private Customer currentCustomer = null;
@@ -26,7 +27,6 @@ public class Session {
     private AccountDao ad;
     private TransactionDao td;
     private int withdrawalCounter = 0;
-    private String accountType;
 
 
     public Session(UserInterface ui) {
@@ -41,6 +41,8 @@ public class Session {
         cd = new JdbcCustomerDao(dataSource);
         ad = new JdbcAccountDao(dataSource);
         td = new JdbcTransactionDao(dataSource);
+        ScheduleTask scheduler = new ScheduleTask();
+        scheduler.accrueInterest();
         printOpening();
         welcome();
     }
@@ -86,7 +88,7 @@ public class Session {
     public void promptForAccountType() {
         ui.put("Would you like to open a" +
                 " (C)hecking or (S)avings account today? ");
-        accountType = ui.getAlpha().toLowerCase();
+        String accountType = ui.getAlpha().toLowerCase();
         while ((!(accountType.equalsIgnoreCase("c") || accountType.equalsIgnoreCase("s")))){
             ui.put("Please enter C or S");
             accountType = ui.getAlpha().toLowerCase();
@@ -172,7 +174,9 @@ public class Session {
             ui.put("Current account is " + currentAccount.toString());
             ui.put("Previous transactions: ");
             for (Transaction transaction : td.getTransactionsByAccountNumber(currentAccount.getAccountNumber())) {
-                ui.put(transaction.toString());
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                ui.put(transaction.getTime().toLocalDateTime().format(dtf) + " Account #"+
+                        transaction.getAccountNumber() + " $"+ transaction.getAmount());
             }
             if (this.cd.getAccountsByCustomerId(currentCustomer.getCustomerId()).size() == 1) {
                 ui.put("Would you like to (W)ithdraw funds, (D)eposit funds, (G)et balance, or (O)pen another account? ");
@@ -353,9 +357,6 @@ public class Session {
         processTransaction(bigCredit);
     }
 
-    public String getName() {
-        return name;
-    }
 
     public void setName(String name) {
         this.name = name;

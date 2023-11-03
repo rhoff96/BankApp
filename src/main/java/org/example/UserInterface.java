@@ -1,7 +1,6 @@
 package org.example;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Scanner;
 import java.util.regex.Pattern;
@@ -54,8 +53,7 @@ public class UserInterface {
             response = userInput.nextLine();
         }
         BigDecimal bigResponse = new BigDecimal(response);
-        BigDecimal roundedBig = bigResponse.setScale(2, RoundingMode.DOWN);
-        return roundedBig;
+        return bigResponse.setScale(2, RoundingMode.DOWN);
     }
 
 }
