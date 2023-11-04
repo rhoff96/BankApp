@@ -49,11 +49,13 @@ public class Account {
     public void setAccountType(String accountType) {
         this.accountType = accountType;
     }
+
     @Override
     public String toString() {
         return this.accountType + " #" + this.getAccountNumber()
                 + " Current Balance: $" + this.getAccountBalance();
     }
+
     @Override
     public boolean equals(Object obj) {
         Account other = (Account) obj;
@@ -64,6 +66,9 @@ public class Account {
             return false;
         }
         if (!(this.getAccountNumber() == other.getAccountNumber())) {
+            return false;
+        }
+        if (!(this.getAccountBalance().equals(other.getAccountBalance()))) {
             return false;
         }
         return this.getCustomerId() == other.getCustomerId();

@@ -55,6 +55,7 @@ public class JdbcAccountDao implements AccountDao {
         try {
             int newAccountId = jdbcTemplate.queryForObject(sql, int.class, account.getCustomerId(), account.getAccountType());
             newAccount = getAccountById(newAccountId);
+            newAccount.setAccountBalance(BigDecimal.ZERO);
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database");
         } catch (DataIntegrityViolationException e) {

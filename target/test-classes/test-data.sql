@@ -7,7 +7,7 @@ DROP TABLE IF EXISTS customer;
 CREATE TABLE customer (
 	customer_id SERIAL PRIMARY KEY,
 	name varchar(50) NOT NULL,
-	password varchar(50) UNIQUE,
+	password varchar(50) UNIQUE NOT NULL,
 	last_login timestamp DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -22,8 +22,8 @@ CREATE TABLE transaction (
 	transaction_id SERIAL PRIMARY KEY,
 	time timestamp NOT NULL,
 	account_number int NOT NULL,
-	previous_balance money NOT NULL,
-	amount money NOT NULL,
+	previous_balance numeric NOT NULL,
+	amount numeric NOT NULL,
 	CONSTRAINT FK_transaction_account FOREIGN KEY (account_number) REFERENCES account(account_number)
 );
 
@@ -34,6 +34,7 @@ INSERT INTO account(customer_id, type) VALUES (1, 'Checking');--account # 1
 INSERT INTO account(customer_id, type) VALUES (1, 'Savings'); -- account #2
 INSERT INTO account(customer_id, type) VALUES (2, 'Checking'); -- account #3
 INSERT INTO account(customer_id, type) VALUES (2, 'Savings'); -- account #4
+INSERT INTO account(customer_id, type) VALUES (1, 'Checking'); -- account #5
 
 INSERT INTO transaction(time, account_number, previous_balance, amount) VALUES ('2012-10-25 00:00:00',1,100,10.0);
 INSERT INTO transaction(time, account_number, previous_balance, amount) VALUES ('2015-11-20 00:00:00',2,50,200.0);

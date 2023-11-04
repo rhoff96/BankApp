@@ -75,6 +75,7 @@ public class Customer {
         Gold,
         Platinum
     }
+
     public void setTier() {
         if (this.totalBalance == null) {
             this.tier = Customer.Tier.Bronze;
@@ -94,6 +95,7 @@ public class Customer {
     public Customer.Tier getTier() {
         return tier;
     }
+
     @Override
     public boolean equals(Object obj) {
         Customer other = (Customer) obj;
@@ -101,6 +103,9 @@ public class Customer {
             return false;
         }
         if (!this.getName().equals(other.getName())) {
+            return false;
+        }
+        if (!(this.getTotalBalance().equals(other.getTotalBalance()))) {
             return false;
         }
         return this.getPassword().equals(other.getPassword());

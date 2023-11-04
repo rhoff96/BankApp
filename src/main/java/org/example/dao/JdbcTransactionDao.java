@@ -50,7 +50,6 @@ public class JdbcTransactionDao implements TransactionDao {
             throw new DaoException("Unable to connect to server or database");
         } catch (DataIntegrityViolationException e) {
             throw new DaoException("Data integrity violation");
-
         }
         return newTransaction;
     }

@@ -5,11 +5,13 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.math.BigDecimal;
+
 public class JdbcAccountDaoTests extends BaseDaoTests {
 
     private JdbcAccountDao testAd;
     private static final Account ACCOUNT_1 = new Account(1, 1, "Checking");
-    private static final Account ACCOUNT_2 = new Account(5, 1, "Savings");
+    private static final Account ACCOUNT_2 = new Account(6, 1, "Savings");
     private static final Account ACCOUNT_3 = new Account(3, 1, "Checking");
 
     @Before
@@ -19,6 +21,7 @@ public class JdbcAccountDaoTests extends BaseDaoTests {
 
     @Test
     public void when_valid_id_then_get_account_by_id_returns_account() {
+        ACCOUNT_1.setAccountBalance(new BigDecimal("10.0"));
         Account retrieved = testAd.getAccountById(1);
         Assert.assertEquals("Valid id should return correct account", ACCOUNT_1, retrieved);
     }
@@ -36,6 +39,7 @@ public class JdbcAccountDaoTests extends BaseDaoTests {
         newAccount.setCustomerId(1);
         newAccount.setAccountType("Savings");
         Account retrieved = testAd.createAccount(newAccount);
+        ACCOUNT_2.setAccountBalance(BigDecimal.ZERO);
         Assert.assertEquals("Valid account should return correct account", ACCOUNT_2, retrieved);
     }
     //invalid account test?

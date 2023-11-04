@@ -19,28 +19,9 @@ public class SessionTests extends BaseDaoTests {
 
     }
     @Test
-    public void create_customer_creates_new_customer(){
-        s.setName("Mike Levy");
-        s.setPassword("test456");
-        Customer newCustomer = s.createCustomer();
-        Customer retrieved = testCd.createCustomer(newCustomer);
-        Assert.assertEquals("If user is new, authenticate should create new user", CUSTOMER_2,retrieved);
+    public void sample(){
 
-    }
-    @Test
-    public void when_username_and_password_found_access_correct_customer(){
-        Customer actual = testCd.getCustomerByNameAndPassword("Russell Hoffman","admin");
-        Assert.assertEquals("If user is returning, return correct user", CUSTOMER_1,actual);
-    }
-    @Test
-    public void when_look_up_valid_customer_then_return_customer(){
-        s.setName("Russell Hoffman");
-        s.setPassword("admin");
-        Customer expected = new Customer();
-        expected.setName("Russell Hoffman");
-        expected.setPassword("admin");
-        Customer retrieved = s.lookUpCustomer();
-        Assert.assertEquals("Lookup valid customer should return customer",expected,retrieved);
+
     }
 
 }

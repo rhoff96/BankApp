@@ -53,7 +53,10 @@ public class UserInterface {
             response = userInput.nextLine();
         }
         BigDecimal bigResponse = new BigDecimal(response);
-        return bigResponse.setScale(2, RoundingMode.DOWN);
+        return roundBigDec(bigResponse);
     }
+    public BigDecimal roundBigDec(BigDecimal input){
+        return input.setScale(2, RoundingMode.DOWN);
 
+    }
 }
