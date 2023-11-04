@@ -2,12 +2,15 @@ package org.example.model;
 
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 
 public class Account {
     private int accountNumber;
     private int customerId;
     private String accountType;
     private BigDecimal accountBalance;
+    private DecimalFormat df = new DecimalFormat("#,###.00");
+
 
     public void setAccountBalance(BigDecimal accountBalance) {
         this.accountBalance = accountBalance;
@@ -53,7 +56,7 @@ public class Account {
     @Override
     public String toString() {
         return this.accountType + " #" + this.getAccountNumber()
-                + " Current Balance: $" + this.getAccountBalance();
+                + " Current Balance: $" + df.format(this.getAccountBalance());
     }
 
     @Override

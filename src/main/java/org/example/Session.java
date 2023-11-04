@@ -10,11 +10,11 @@ import org.springframework.dao.DataIntegrityViolationException;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.text.DecimalFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Timer;
 
 public class Session {
     private Customer currentCustomer = null;
@@ -27,6 +27,7 @@ public class Session {
     private AccountDao ad;
     private TransactionDao td;
     private int withdrawalCounter = 0;
+    private DecimalFormat df = new DecimalFormat("#,###.00");
 
 
     public Session(UserInterface ui) {
@@ -41,24 +42,24 @@ public class Session {
         cd = new JdbcCustomerDao(dataSource);
         ad = new JdbcAccountDao(dataSource);
         td = new JdbcTransactionDao(dataSource);
-        ScheduleTask scheduler = new ScheduleTask();
-        scheduler.accrueInterest();
-        scheduler.chargeMaintenanceFee();
+//        ScheduleTask scheduler = new ScheduleTask();
+//        scheduler.accrueInterest();
+//        scheduler.chargeMaintenanceFee();
         printOpening();
         welcome();
     }
 
     public void printOpening() {
-        ui.put("             Welcome to Tech Elevator Bank!\n");
+        ui.put("                        Welcome!\n");
         ui.put("===$$=================Bank Policies===================$$===\n");
         ui.put("1. Savings accounts must maintain a minimum balance of $500. " +
                 "Withdrawals below this balance will incur a $10 fee, as well as a monthly maintenance fee of $15.");
         ui.put("2. Savings accounts may only have two withdrawals per banking session.");
         ui.put("3. Banking Loyalty tier structure: ");
-        ui.put("    -Bronze: Total Balance of all accounts below $5000. Savings interest rate: 2%");
-        ui.put("    -Silver: Total Balance of all accounts below $10000. Savings interest rate: 3%");
-        ui.put("    -Gold: Total Balance of all accounts below $25000. Savings interest rate: 4%");
-        ui.put("    -Platinum: Total Balance of all accounts at or above $25000. Savings interest rate: 5%");
+        ui.put("    -Bronze: Total Balance of all accounts below $5,000. Savings interest rate: 2%");
+        ui.put("    -Silver: Total Balance of all accounts below $10,000. Savings interest rate: 3%");
+        ui.put("    -Gold: Total Balance of all accounts below $25,000. Savings interest rate: 4%");
+        ui.put("    -Platinum: Total Balance of all accounts at or above $25,000. Savings interest rate: 5%");
         ui.put("4. Interest is accrued monthly");
         ui.put("-------------------------------------------------------------");
     }
@@ -67,11 +68,11 @@ public class Session {
         while (true) {
             ui.put("Please log in by entering your 'Firstname Lastname': ");
             name = ui.getAlpha();
-            ui.put("Please enter your password: ");
+            ui.put("Please enter your password (must be at least 12 characters): ");
             password = ui.getPassword();
             currentCustomer = lookUpCustomer();
             if (currentCustomer == null) {
-                ui.put("Access Denied. Please (T)ry again or (C)reate a new user profile: ");
+                ui.put("Access Denied. Please (T)ry again or (C)reate a new customer profile: ");
                 String choice = ui.getAlpha();
                 if (choice.equalsIgnoreCase("C")) {
                     currentCustomer = createCustomer();
@@ -142,12 +143,13 @@ public class Session {
     }
 
     public Account displayAllAccounts() {
+        ui.put("Total Balance: $" + df.format((currentCustomer.getTotalBalance())));
+        ui.put("\n");
         ui.put("Please enter the account number to access: ");
         List<Account> accounts = cd.getAccountsByCustomerId(currentCustomer.getCustomerId());
         for (Account account : accounts) {
             ui.put(account.toString());
         }
-        ui.put("Total Balance: $" + currentCustomer.getTotalBalance());
         while (true) {
             int intSelection = ui.getInt();
             for (Account account : accounts) {
@@ -163,7 +165,7 @@ public class Session {
     public void transact() {
         if (currentAccount.getAccountBalance().compareTo(new BigDecimal(0)) == 0) {
             System.out.printf("Your %s account has a balance of $%s.\n", currentAccount.getAccountType(),
-                    currentAccount.getAccountBalance());
+                    df.format(currentAccount.getAccountBalance()));
             transactionAction("d");
         }
         loopSession();
@@ -251,7 +253,7 @@ public class Session {
                 ui.put("Please select an option from the list.");
                 loopSession();
         }
-        ui.put("Current balance is $" + currentAccount.getAccountBalance());
+        ui.put("Current balance is $" + df.format(currentAccount.getAccountBalance()));
     }
 
 
@@ -271,7 +273,7 @@ public class Session {
 
     public Account pickTransferAccount() {
         ui.put("Current account :#" + currentAccount.getAccountNumber() +
-                " Balance $" + currentAccount.getAccountBalance());
+                " Balance $" + df.format(currentAccount.getAccountBalance()));
         ui.put("Available accounts to transfer to: ");
         List<Account> accounts = cd.getAccountsByCustomerId(currentCustomer.getCustomerId());
         for (Account account : accounts) {
@@ -309,7 +311,7 @@ public class Session {
         BigDecimal tempBalance = currentAccount.getAccountBalance();
         BigDecimal test = tempBalance.subtract(bigDebit);
         if (test.compareTo(BigDecimal.ZERO) < 0) {
-            ui.put("Insufficient funds. Your account was debited the maximum allowed amount of $" + tempBalance);
+            ui.put("Insufficient funds. Your account was debited the maximum allowed amount of $" + df.format(tempBalance));
             processTransaction(tempBalance.multiply(BigDecimal.valueOf(-1)));
         } else {
             processTransaction(bigDebit.multiply(BigDecimal.valueOf(-1)));
@@ -334,7 +336,7 @@ public class Session {
             } else {
                 processTransaction((bigDebit.add(OVERDRAFT_FEE)).multiply(BigDecimal.valueOf(-1)));
                 ui.put("Your balance fell below the minimum balance of $100 and is assessed a fee of $10.");
-                ui.put("Your current balance is $" + currentAccount.getAccountBalance());
+                ui.put("Your current balance is $" + df.format(currentAccount.getAccountBalance()));
             }
         } else {
             this.checkingWithdraw(bigDebit);
@@ -351,17 +353,5 @@ public class Session {
         processTransaction(bigCredit);
     }
 
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 
 }

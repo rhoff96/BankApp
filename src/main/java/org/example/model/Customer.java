@@ -11,6 +11,7 @@ public class Customer {
     private BigDecimal totalBalance;
     private LocalDateTime lastLogin;
 
+
     public void setTier(Tier tier) {
         this.tier = tier;
     }
