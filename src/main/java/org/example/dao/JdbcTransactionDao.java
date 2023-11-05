@@ -97,7 +97,6 @@ public class JdbcTransactionDao implements TransactionDao {
     @Override
     public List<Transaction> generateReport(Timestamp begin, Timestamp end, int accountNumber, BigDecimal amount) {
         List<Transaction> transactions = new ArrayList<>();
-        String sql = "";
         final String sqlByTime = "SELECT transaction_id, time, account_number, previous_balance, amount " +
                 "FROM transaction WHERE time > ? AND time < ? ORDER BY time ASC";
         final String sqlSortAmount = "SELECT transaction_id, time, account_number, previous_balance, amount \n" +
@@ -110,17 +109,13 @@ public class JdbcTransactionDao implements TransactionDao {
         try {
             SqlRowSet results = null;
             if ((accountNumber == 0) && (amount.compareTo(BigDecimal.ZERO)) == 0) {
-                sql += sqlByTime;
-                results = jdbcTemplate.queryForRowSet(sql, begin, end);
+                results = jdbcTemplate.queryForRowSet(sqlByTime, begin, end);
             } else if ((accountNumber == 0) && (amount.compareTo(BigDecimal.ZERO) != 0)) {
-                sql += sqlSortAmount;
-                results = jdbcTemplate.queryForRowSet(sql, begin, end, amount);
+                results = jdbcTemplate.queryForRowSet(sqlSortAmount, begin, end, amount);
             } else if ((accountNumber != 0) && (amount.compareTo(BigDecimal.ZERO) == 0)) {
-                sql += sqlSortAccount;
-                results = jdbcTemplate.queryForRowSet(sql, begin,end, accountNumber);
+                results = jdbcTemplate.queryForRowSet(sqlSortAccount, begin,end, accountNumber);
             } else if ((accountNumber != 0) && (amount.compareTo(BigDecimal.ZERO) != 0)) {
-                sql += sqlSortAmountAndAccount;
-                results = jdbcTemplate.queryForRowSet(sql, begin, end, amount, accountNumber);
+                results = jdbcTemplate.queryForRowSet(sqlSortAmountAndAccount, begin, end, amount, accountNumber);
             }
             while (results.next()) {
                 transactions.add(mapRowToTransaction(results));
