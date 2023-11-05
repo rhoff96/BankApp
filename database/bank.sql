@@ -7,11 +7,13 @@ CREATE TABLE customer (
 	name varchar(50) NOT NULL,
 	password varchar(50) UNIQUE NOT NULL,
 	last_login timestamp DEFAULT CURRENT_TIMESTAMP
+);
 
 CREATE TABLE account (
 	account_number SERIAL PRIMARY KEY,
 	customer_id int NOT NULL,
 	type varchar(10) NOT NULL,
+	withdrawal_count int,
 	CONSTRAINT FK_customer_account FOREIGN KEY (customer_id) REFERENCES customer(customer_id)
 );
 

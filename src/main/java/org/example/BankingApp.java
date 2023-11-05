@@ -8,8 +8,7 @@ public class BankingApp {
     public void run() {
         UserInterface ui = new UserInterface();
         Session session = new Session(ui);
-        session.setup();
-        session.transact();
+        session.start();
     }
 
     public static void main(String[] args) {

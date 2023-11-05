@@ -3,13 +3,13 @@ package org.example;
 import org.example.dao.CustomerDao;
 import org.example.exception.DaoException;
 import org.example.model.Customer;
-import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.jdbc.CannotGetJdbcConnectionException;
 
 public class Authentication {
-    private String name;
-    private String password;
-    private CustomerDao cd;
-    private boolean isNew;
+    private final String name;
+    private final String password;
+    private final CustomerDao cd;
+    private final boolean isNew;
     private Customer currentCustomer;
 
     public Authentication(String name, String password, CustomerDao cd, boolean isNew) {
@@ -23,20 +23,16 @@ public class Authentication {
         if (isNew) {
             currentCustomer = createCustomer();
         } else {
-            currentCustomer = lookUpCustomer();
-            if (currentCustomer == null) {
-
-
-            }
+            currentCustomer = lookUpCustomer(name, password);
         }
         return currentCustomer;
     }
 
-    public Customer lookUpCustomer() {
+    public Customer lookUpCustomer(String name, String password) {
         try {
             currentCustomer = cd.getCustomerByNameAndPassword(name, password);
-        } catch (DataIntegrityViolationException e) {
-            throw new DaoException("Data integrity violation", e);
+        } catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Cannot connect to server or database", e);
         }
         return currentCustomer;
     }

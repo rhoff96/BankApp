@@ -15,6 +15,7 @@ CREATE TABLE account (
 	account_number SERIAL PRIMARY KEY,
 	customer_id int NOT NULL,
 	type varchar(10) NOT NULL,
+	withdrawal_count int,
 	CONSTRAINT FK_customer_account FOREIGN KEY (customer_id) REFERENCES customer(customer_id)
 );
 

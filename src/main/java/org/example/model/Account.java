@@ -9,8 +9,16 @@ public class Account {
     private int customerId;
     private String accountType;
     private BigDecimal accountBalance;
+    private int withdrawalCount;
     private DecimalFormat df = new DecimalFormat("#,###.00");
 
+    public int getWithdrawalCount() {
+        return withdrawalCount;
+    }
+
+    public void setWithdrawalCount(int withdrawalCount) {
+        this.withdrawalCount = withdrawalCount;
+    }
 
     public void setAccountBalance(BigDecimal accountBalance) {
         this.accountBalance = accountBalance;
@@ -22,11 +30,17 @@ public class Account {
 
     public Account() {
     }
-
-    public Account(int accountNumber, int customerId, String accountType) {
+    public Account(int accountNumber, int customerId, String accountType){
         this.accountNumber = accountNumber;
         this.customerId = customerId;
         this.accountType = accountType;
+
+    }
+    public Account(int accountNumber, int customerId, String accountType, int withdrawalCount) {
+        this.accountNumber = accountNumber;
+        this.customerId = customerId;
+        this.accountType = accountType;
+        this.withdrawalCount = withdrawalCount;
     }
 
     public int getAccountNumber() {

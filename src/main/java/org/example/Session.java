@@ -7,24 +7,19 @@ import org.example.model.Customer;
 import org.example.model.Transaction;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.text.DecimalFormat;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class Session {
-    private Customer currentCustomer = null;
-    private Account currentAccount = null;
-    protected boolean customerIsNew = false;
+    private Customer currentCustomer;
+    private Account currentAccount;
+    private boolean customerIsNew = false;
     private final UserInterface ui;
-    private String name;
-    private String password;
     private CustomerDao cd;
     private AccountDao ad;
     private TransactionDao td;
-    private int withdrawalCounter = 0;
     private final DecimalFormat df = new DecimalFormat("#,###.00");
 
 
@@ -32,7 +27,7 @@ public class Session {
         this.ui = ui;
     }
 
-    public void setup() {
+    public void start() {
         BasicDataSource dataSource = new BasicDataSource();
         dataSource.setUrl("jdbc:postgresql://localhost:5432/Bank");
         dataSource.setUsername("postgres");
@@ -50,6 +45,7 @@ public class Session {
         } else {
             greetAndSelect();
         }
+        transact();
     }
 
     public void printOpening() {
@@ -72,20 +68,15 @@ public class Session {
             ui.put("Please choose an option: \n1. Log in\n2. Register");
             customerIsNew = ui.getOneOrTwo();
             ui.put("Please enter your 'Firstname Lastname': ");
-            name = ui.getAlpha();
+            String name = ui.getAlpha();
             ui.put("Please enter your password (must be at least 12 characters): ");
-            password = ui.getPassword();
-
+            String password = ui.getPassword();
             Authentication authentication = new Authentication(name, password, cd, customerIsNew);
             currentCustomer = authentication.authenticate();
-
             if (currentCustomer == null) {
                 ui.put("Access Denied.");
-            } else {
-                break;
-            }
+            } else break;
         }
-        ui.put("Profile created. Welcome, " + currentCustomer.getFirstName() + "!");
         return currentCustomer;
     }
 
@@ -130,8 +121,7 @@ public class Session {
     }
 
     public Account displayAllAccounts() {
-        ui.put("Total Balance: $" + df.format((currentCustomer.getTotalBalance())));
-        ui.put("\n");
+        ui.put("Total Balance: $" + df.format((cd.getCustomerById(currentCustomer.getCustomerId()).getTotalBalance())));
         ui.put("Please enter the account number to access: ");
         List<Account> accounts = cd.getAccountsByCustomerId(currentCustomer.getCustomerId());
         for (Account account : accounts) {
@@ -161,7 +151,7 @@ public class Session {
     public void loopSession() {
         boolean continueSession = true;
         while (continueSession) {
-            ui.put("Current account is " + currentAccount.toString());
+            ui.put("Current account is " + ad.getAccountById(currentAccount.getAccountNumber()).toString());
             ui.put("\nPrevious transactions: \n");
             for (Transaction transaction : td.getTransactionsByAccountNumber(currentAccount.getAccountNumber())) {
                 ui.put(transaction.toString());
@@ -174,7 +164,7 @@ public class Session {
             }
             String choice = ui.getAlpha().toLowerCase();
             transactionAction(choice);
-            ui.put("Current account is " + currentAccount.toString());
+            ui.put("Current account is " + ad.getAccountById(currentAccount.getAccountNumber()).toString());
             continueSession = promptToContinue();
         }
         currentCustomer.setTier();
@@ -191,16 +181,6 @@ public class Session {
         return keepBanking;
     }
 
-    public Transaction processTransaction(BigDecimal amount) {
-        Transaction newTransaction = new Transaction();
-        newTransaction.setPreviousBalance(currentAccount.getAccountBalance());
-        newTransaction.setTime(Timestamp.from(Instant.now()));
-        newTransaction.setAmount(amount);
-        newTransaction.setAccountNumber(currentAccount.getAccountNumber());
-        Transaction updatedTransaction = td.createTransaction(newTransaction);
-        currentAccount = ad.getAccountById(currentAccount.getAccountNumber());
-        return updatedTransaction;
-    }
 
     public void transactionAction(String choice) {
         switch (choice) {
@@ -208,25 +188,45 @@ public class Session {
                 promptForReport();
                 break;
             case "w":
+                final int SAVINGS_WITHDRAWAL_MAX = 5;
                 ui.put("Please enter withdrawal amount");
                 BigDecimal withdrawal = ui.getBigDec();
-                if (currentAccount.getAccountType().equals("Checking")) checkingWithdraw(withdrawal);
-                else savingsWithdraw(withdrawal);
+                BigDecimal previousBalance = currentAccount.getAccountBalance();
+                TransactionHandler handler = new TransactionHandler(currentAccount.getAccountNumber(), withdrawal, ad, td);
+                BigDecimal result = handler.withdrawCheckingOrSavings();
+                if (result.compareTo(BigDecimal.ZERO) == 0) {
+                    ui.put("Insufficient funds. Your account was debited the maximum allowed amount of $" + df.format(previousBalance));
+                } else if (result.compareTo(new BigDecimal("-2.0")) == 0) {
+                    ui.put("Your balance fell below the minimum balance of $500 and is assessed a fee of $10.");
+                } else if (result.compareTo(new BigDecimal("-1.0")) == 0) {
+                    ui.put("Transaction failed. Withdrawals equal or greater than current balance are not allowed.");
+                } else if (result.compareTo(new BigDecimal("-3.0")) == 0) {
+                    ui.put("Transaction failed. You have exceeded the maximum number of allowed withdrawals per session from a savings account.");
+                }
+                if ((ad.getAccountById(currentAccount.getAccountNumber())).getAccountType().equals("Savings")){
+                    System.out.printf("Savings account has %d remaining withdrawals this month. ", SAVINGS_WITHDRAWAL_MAX - (ad.getAccountById(currentAccount.getAccountNumber())).getWithdrawalCount());
+                }
                 break;
             case "d":
-                deposit();
+                ui.put("Please enter deposit amount: ");
+                BigDecimal bigCredit = ui.getBigDec();
+                handler = new TransactionHandler(currentAccount.getAccountNumber(), bigCredit, ad, td);
+                handler.processTransaction();
                 break;
             case "g":
                 break;
             case "t":
                 Account transferTo = pickTransferAccount();
                 BigDecimal amount = promptForTransferAmount();
-                transfer(transferTo, amount);
+                handler = new TransactionHandler(currentAccount.getAccountNumber(), amount, ad, td);
+                handler.transfer(transferTo);
+                ui.put("Transfer completed");
                 return;
             case "o":
                 this.promptForAccountType();
                 return;
             case "l":
+                displayAllAccounts();
             case "s":
                 displayAllAccounts();
                 return;
@@ -234,7 +234,7 @@ public class Session {
                 ui.put("Please select an option from the list.");
                 loopSession();
         }
-        ui.put("Current balance is $" + df.format(currentAccount.getAccountBalance()));
+        ui.put("Current balance is $" + df.format(ad.getAccountById(currentAccount.getAccountNumber()).getAccountBalance()));
     }
 
     private void promptForReport() {
@@ -279,10 +279,10 @@ public class Session {
     }
 
     public Account pickTransferAccount() {
-        ui.put("Current account :#" + currentAccount.getAccountNumber() +
-                " Balance $" + df.format(currentAccount.getAccountBalance()));
+        ui.put("Current account: #" + ad.getAccountById(currentAccount.getAccountNumber()));
+//                " Balance $" + df.format(ad.getAccountById(currentAccount.getAccountNumber()).getAccountBalance()));
         ui.put("Available accounts to transfer to: ");
-        List<Account> accounts = cd.getAccountsByCustomerId(currentCustomer.getCustomerId());
+        List<Account> accounts = cd.getAccountsByCustomerId((currentAccount.getCustomerId()));
         for (Account account : accounts) {
             if (account.getAccountNumber() != currentAccount.getAccountNumber())
                 ui.put(account.toString());
@@ -301,64 +301,4 @@ public class Session {
             ui.put("Account not found.");
         }
     }
-
-    public boolean transfer(Account accountTo, BigDecimal transferBig) {
-        BigDecimal debit = transferBig.multiply(BigDecimal.valueOf(-1));
-        this.processTransaction(debit);
-        Account temp = currentAccount;
-        currentAccount = accountTo;
-        this.processTransaction(transferBig);
-        currentAccount = temp;
-        ui.put("Transfer completed");
-        return true;
-
-    }
-
-    public BigDecimal checkingWithdraw(BigDecimal bigDebit) {
-        BigDecimal tempBalance = currentAccount.getAccountBalance();
-        BigDecimal test = tempBalance.subtract(bigDebit);
-        if (test.compareTo(BigDecimal.ZERO) < 0) {
-            ui.put("Insufficient funds. Your account was debited the maximum allowed amount of $" + df.format(tempBalance));
-            processTransaction(tempBalance.multiply(BigDecimal.valueOf(-1)));
-        } else {
-            processTransaction(bigDebit.multiply(BigDecimal.valueOf(-1)));
-        }
-        return currentAccount.getAccountBalance();
-    }
-
-    public BigDecimal savingsWithdraw(BigDecimal bigDebit) {
-        final int SAVINGS_WITHDRAWAL_MAX = 2;
-        final BigDecimal MINIMUM_BALANCE = new BigDecimal(500);
-        final BigDecimal OVERDRAFT_FEE = new BigDecimal(10);
-
-        if (withdrawalCounter == SAVINGS_WITHDRAWAL_MAX) {
-            ui.put("You have reached the maximum number of allowed withdrawals per session from a savings account.");
-            return currentAccount.getAccountBalance();
-        }
-
-        if (currentAccount.getAccountBalance().subtract(bigDebit).compareTo(MINIMUM_BALANCE) < 0) {
-            if (currentAccount.getAccountBalance().subtract(bigDebit).compareTo(BigDecimal.ZERO) < 0) {
-                ui.put("Withdrawals equal or greater than current balance are not allowed. Transaction failed");
-                return currentAccount.getAccountBalance();
-            } else {
-                processTransaction((bigDebit.add(OVERDRAFT_FEE)).multiply(BigDecimal.valueOf(-1)));
-                ui.put("Your balance fell below the minimum balance of $100 and is assessed a fee of $10.");
-                ui.put("Your current balance is $" + df.format(currentAccount.getAccountBalance()));
-            }
-        } else {
-            this.checkingWithdraw(bigDebit);
-        }
-        withdrawalCounter++;
-        System.out.printf("You have %d remaining withdrawals today. ", SAVINGS_WITHDRAWAL_MAX - withdrawalCounter);
-
-        return currentAccount.getAccountBalance();
-    }
-
-    public void deposit() {
-        ui.put("Please enter deposit amount: ");
-        BigDecimal bigCredit = ui.getBigDec();
-        processTransaction(bigCredit);
-    }
-
-
 }

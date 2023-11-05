@@ -67,7 +67,7 @@ public class Transaction {
     @Override
     public String toString() {
         return this.getTime().toLocalDateTime().format(dtf) + " Account #" + this.getAccountNumber()
-                + " Previous Balance: $"+ this.getPreviousBalance() + " $"+ this.getAmount();
+                + " Previous Balance: $"+ this.getPreviousBalance() + " Transaction Amount: $"+ this.getAmount();
     }
 
     @Override

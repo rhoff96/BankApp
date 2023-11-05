@@ -11,7 +11,7 @@ public class JdbcAccountDaoTests extends BaseDaoTests {
 
     private JdbcAccountDao testAd;
     private static final Account ACCOUNT_1 = new Account(1, 1, "Checking");
-    private static final Account ACCOUNT_2 = new Account(6, 1, "Savings");
+    private static final Account ACCOUNT_2 = new Account(6, 1, "Savings", 0);
     private static final Account ACCOUNT_3 = new Account(3, 1, "Checking");
 
     @Before
@@ -49,6 +49,7 @@ public class JdbcAccountDaoTests extends BaseDaoTests {
         Account accountToUpdate = testAd.getAccountById(1);
         accountToUpdate.setAccountType("Savings");
         accountToUpdate.setCustomerId(2);
+        accountToUpdate.setWithdrawalCount(5);
         Account updatedAccount = testAd.updateAccount(accountToUpdate);
         Assert.assertNotNull(updatedAccount);
         Account retrievedAccount = testAd.getAccountById(1);

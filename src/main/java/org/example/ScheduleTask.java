@@ -51,6 +51,8 @@ public class ScheduleTask {
                         transaction.setAmount(new BigDecimal("-15.00"));
 
                         transactionDao.createTransaction(transaction);
+                    } else if (account.getAccountType().equals("Savings")) {
+                        account.setWithdrawalCount(0);
                     }
                 }
                 System.out.println("Maintenance fee assessed on " + LocalDate.now());
