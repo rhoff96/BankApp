@@ -2,6 +2,8 @@ package org.example.dao;
 import org.example.exception.DaoException;
 import org.example.model.Transaction;
 
+import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.List;
 
 public interface TransactionDao {
@@ -34,4 +36,12 @@ public interface TransactionDao {
      * @throws DaoException if an error occurs
      */
     List<Transaction> getTransactionsByAccountNumber(int accountNumber);
+
+    /**
+     * Generates a list of all transactions by given criteria
+     * @param from - beginning time
+     * @param to - end time
+     * @return a list of transaction objects
+     */
+    List<Transaction> generateReport(Timestamp from, Timestamp to, int accountNumber, BigDecimal amount);
 }

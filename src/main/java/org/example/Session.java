@@ -27,7 +27,7 @@ public class Session {
     private AccountDao ad;
     private TransactionDao td;
     private int withdrawalCounter = 0;
-    private DecimalFormat df = new DecimalFormat("#,###.00");
+    private final DecimalFormat df = new DecimalFormat("#,###.00");
 
 
     public Session(UserInterface ui) {
@@ -91,7 +91,7 @@ public class Session {
         ui.put("Would you like to open a" +
                 " (C)hecking or (S)avings account today? ");
         String accountType = ui.getAlpha().toLowerCase();
-        while ((!(accountType.equalsIgnoreCase("c") || accountType.equalsIgnoreCase("s")))){
+        while ((!(accountType.equalsIgnoreCase("c") || accountType.equalsIgnoreCase("s")))) {
             ui.put("Please enter C or S");
             accountType = ui.getAlpha().toLowerCase();
         }
@@ -177,9 +177,7 @@ public class Session {
             ui.put("Current account is " + currentAccount.toString());
             ui.put("Previous transactions: ");
             for (Transaction transaction : td.getTransactionsByAccountNumber(currentAccount.getAccountNumber())) {
-                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-                ui.put(transaction.getTime().toLocalDateTime().format(dtf) + " Account #"+
-                        transaction.getAccountNumber() + " $"+ transaction.getAmount());
+                ui.put(transaction.toString());
             }
             if (this.cd.getAccountsByCustomerId(currentCustomer.getCustomerId()).size() == 1) {
                 ui.put("Would you like to (W)ithdraw funds, (D)eposit funds, (G)et balance, or (O)pen another account? ");
@@ -198,18 +196,11 @@ public class Session {
 
     public boolean promptToContinue() {
         boolean keepBanking = true;
-        while (true) {
             ui.put("Would you like to keep banking? (y/n)");
-            String response = ui.getAlpha();
+            String response = ui.getYesNo();
             if (response.equalsIgnoreCase("n")) {
                 keepBanking = false;
-                break;
-            } else if (response.equalsIgnoreCase("y")) {
-                break;
-            } else {
-                ui.put("Please enter y or n.");
             }
-        }
         return keepBanking;
     }
 
@@ -226,6 +217,20 @@ public class Session {
 
     public void transactionAction(String choice) {
         switch (choice) {
+            case "r":
+                Report report = new Report(ui, td);
+                List<Transaction> transactions = report.getReportParameters();
+                for (Transaction transaction : transactions) {
+                    ui.put(transaction.toString());
+                }
+                ui.put("Would you like to save these records? (y/n): ");
+                String response = ui.getYesNo();
+                if (response.equalsIgnoreCase("Y")){
+                    Logger logger = new Logger();
+                    logger.writeFile(transactions);
+                }
+                ui.put("Records saved");
+                break;
             case "w":
                 ui.put("Please enter withdrawal amount");
                 BigDecimal withdrawal = ui.getBigDec();

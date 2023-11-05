@@ -1,9 +1,9 @@
-package org.example;
-
-import java.io.*;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
+//package org.example;
+//
+//import java.io.*;
+//import java.time.LocalDateTime;
+//import java.time.format.DateTimeFormatter;
+//
 //public class Log {
 //
 //    public void logEntry(User currentUser, Account currentAccount, String typeAmount) {

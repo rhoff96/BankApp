@@ -53,7 +53,7 @@ public class ScheduleTask {
                         transactionDao.createTransaction(transaction);
                     }
                 }
-                System.out.println("Maintenance fee assessed on " + LocalDateTime.now());
+                System.out.println("Maintenance fee assessed on " + LocalDate.now());
             }
         };
         Timer timer = new Timer("Timer");
@@ -104,8 +104,8 @@ public class ScheduleTask {
 
                         transactionDao.createTransaction(transaction);
                     }
-                    System.out.println("Interest accrued on " + LocalDate.now());
                 }
+                System.out.println("Interest accrued on " + LocalDate.now());
             }
         };
         Timer timer = new Timer("Timer");

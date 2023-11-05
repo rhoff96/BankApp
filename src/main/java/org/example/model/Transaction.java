@@ -2,6 +2,7 @@ package org.example.model;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.time.format.DateTimeFormatter;
 
 public class Transaction {
     private Timestamp time;
@@ -9,6 +10,8 @@ public class Transaction {
     private int accountNumber;
     private BigDecimal previousBalance;
     private BigDecimal amount;
+    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
 
     public Transaction() {
     }
@@ -59,6 +62,12 @@ public class Transaction {
 
     public void setPreviousBalance(BigDecimal previousBalance) {
         this.previousBalance = previousBalance;
+    }
+
+    @Override
+    public String toString() {
+        return this.getTime().toLocalDateTime().format(dtf) + " Account #" + this.getAccountNumber()
+                + " Previous Balance: $"+ this.getPreviousBalance() + " $"+ this.getAmount();
     }
 
     @Override

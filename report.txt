@@ -1,0 +1,7 @@
+275 2023-11-03 11:21:49 Account #3 Previous Balance: $0 $1456.89
+281 2023-11-03 11:37:04 Account #3 Previous Balance: $1456.89 $2.42
+285 2023-11-03 11:37:13 Account #3 Previous Balance: $1459.31 $2.43
+293 2023-11-03 11:44:52 Account #3 Previous Balance: $1461.74 $2.43
+302 2023-11-03 12:20:12 Account #3 Previous Balance: $1464.17 $2.44
+312 2023-11-03 12:21:37 Account #3 Previous Balance: $1466.61 $2.44
+322 2023-11-03 12:42:21 Account #3 Previous Balance: $1469.05 $2.44

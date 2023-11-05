@@ -2,6 +2,7 @@ package org.example;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.Timestamp;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
@@ -9,6 +10,10 @@ public class UserInterface {
 
     Scanner userInput = new Scanner(System.in);
 
+    public String getString() {
+        return userInput.nextLine();
+
+    }
 
     public void put(String message) {
         System.out.println(message);
@@ -30,6 +35,21 @@ public class UserInterface {
             response = userInput.nextLine();
         }
         return response;
+    }
+
+    public String getYesNo() {
+        String response = userInput.nextLine();
+        while ((!response.equalsIgnoreCase("y")) && (!response.equalsIgnoreCase("n"))) {
+            System.out.println("Please enter a Y or N");
+            response = userInput.nextLine();
+        }
+        return response;
+    }
+
+    public Timestamp getTimestamp() {
+        String input = userInput.nextLine();
+        return Timestamp.valueOf(input);
+
     }
 
     public int getInt() {
@@ -55,7 +75,8 @@ public class UserInterface {
         BigDecimal bigResponse = new BigDecimal(response);
         return roundBigDec(bigResponse);
     }
-    public BigDecimal roundBigDec(BigDecimal input){
+
+    public BigDecimal roundBigDec(BigDecimal input) {
         return input.setScale(2, RoundingMode.DOWN);
 
     }

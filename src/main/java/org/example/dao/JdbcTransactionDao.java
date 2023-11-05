@@ -6,7 +6,9 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
+
 import javax.sql.DataSource;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -92,6 +94,43 @@ public class JdbcTransactionDao implements TransactionDao {
         return transactions;
     }
 
+    @Override
+    public List<Transaction> generateReport(Timestamp begin, Timestamp end, int accountNumber, BigDecimal amount) {
+        List<Transaction> transactions = new ArrayList<>();
+        String sql = "";
+        final String sqlByTime = "SELECT transaction_id, time, account_number, previous_balance, amount " +
+                "FROM transaction WHERE time > ? AND time < ? ORDER BY time ASC";
+        final String sqlSortAmount = "SELECT transaction_id, time, account_number, previous_balance, amount \n" +
+                "FROM transaction WHERE time > ? AND time < ? AND amount = ? ORDER BY time ASC;";
+        final String sqlSortAccount = "SELECT transaction_id, time, account_number, previous_balance, amount \n" +
+                "FROM transaction WHERE time > ? AND time < ? AND account_number = ? ORDER BY time ASC;";
+        final String sqlSortAmountAndAccount = "SELECT transaction_id, time, account_number, previous_balance, amount \n" +
+                "FROM transaction WHERE time > ? AND time < ? AND amount = ? AND account_number = ? ORDER BY time ASC;";
+
+        try {
+            SqlRowSet results = null;
+            if ((accountNumber == 0) && (amount.compareTo(BigDecimal.ZERO)) == 0) {
+                sql += sqlByTime;
+                results = jdbcTemplate.queryForRowSet(sql, begin, end);
+            } else if ((accountNumber == 0) && (amount.compareTo(BigDecimal.ZERO) != 0)) {
+                sql += sqlSortAmount;
+                results = jdbcTemplate.queryForRowSet(sql, begin, end, amount);
+            } else if ((accountNumber != 0) && (amount.compareTo(BigDecimal.ZERO) == 0)) {
+                sql += sqlSortAccount;
+                results = jdbcTemplate.queryForRowSet(sql, begin,end, accountNumber);
+            } else if ((accountNumber != 0) && (amount.compareTo(BigDecimal.ZERO) != 0)) {
+                sql += sqlSortAmountAndAccount;
+                results = jdbcTemplate.queryForRowSet(sql, begin, end, amount, accountNumber);
+            }
+            while (results.next()) {
+                transactions.add(mapRowToTransaction(results));
+            }
+        } catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database");
+        }
+        return transactions;
+    }
+
     public Transaction mapRowToTransaction(SqlRowSet rowSet) {
         Transaction transaction = new Transaction();
         transaction.setAccountNumber(rowSet.getInt("account_number"));
@@ -102,4 +141,6 @@ public class JdbcTransactionDao implements TransactionDao {
         transaction.setPreviousBalance(rowSet.getBigDecimal("previous_balance"));
         return transaction;
     }
+
+
 }
