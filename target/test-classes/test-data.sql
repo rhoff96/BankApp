@@ -36,8 +36,8 @@ INSERT INTO account(customer_id, type) VALUES (2, 'Checking'); -- account #3
 INSERT INTO account(customer_id, type) VALUES (2, 'Savings'); -- account #4
 INSERT INTO account(customer_id, type) VALUES (1, 'Checking'); -- account #5
 
-INSERT INTO transaction(time, account_number, previous_balance, amount) VALUES ('2012-10-25 00:00:00',1,100,10.0);
-INSERT INTO transaction(time, account_number, previous_balance, amount) VALUES ('2015-11-20 00:00:00',2,50,200.0);
+INSERT INTO transaction(time, account_number, previous_balance, amount) VALUES ('2012-10-25 00:00:00',1,100.0,10.0);
+INSERT INTO transaction(time, account_number, previous_balance, amount) VALUES ('2015-11-20 00:00:00',2,50.0,200.0);
 INSERT INTO transaction(time, account_number, previous_balance, amount) VALUES ('2019-09-15 00:00:00',3,300.0,50.0);
 INSERT INTO transaction(time, account_number, previous_balance, amount) VALUES ('2023-01-01 00:00:00',4,50.0, 200.0);
 
