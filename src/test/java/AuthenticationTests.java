@@ -31,7 +31,7 @@ public class AuthenticationTests extends BaseDaoTests {
     public void when_user_and_password_correct_return_correct_customer() {
         Authentication authentication = new Authentication("Russell Hoffman","admin",testCd,false);
         Customer retrieved = authentication.authenticate();
-        CUSTOMER_1.setTotalBalance(new BigDecimal("210.0"));
+        CUSTOMER_1.setTotalBalance(new BigDecimal("710.0"));
         Assert.assertEquals("Valid username and password should return correct customer",CUSTOMER_1,retrieved);
     }
     @Test

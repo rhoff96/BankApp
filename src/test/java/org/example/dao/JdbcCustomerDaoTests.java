@@ -23,7 +23,7 @@ public class JdbcCustomerDaoTests extends BaseDaoTests {
 
     @Test
     public void get_customer_by_id_with_valid_id_returns_correct_customer() {
-        CUSTOMER_1.setTotalBalance(new BigDecimal("210.0"));
+        CUSTOMER_1.setTotalBalance(new BigDecimal("710.0"));
         Customer retrieved = testCd.getCustomerById(1);
         Assert.assertEquals("Customers with the same id should be equal", CUSTOMER_1, retrieved);
     }
@@ -36,7 +36,7 @@ public class JdbcCustomerDaoTests extends BaseDaoTests {
 
     @Test
     public void get_customer_by_valid_name_password_returns_customer() {
-        CUSTOMER_1.setTotalBalance(new BigDecimal("210.0"));
+        CUSTOMER_1.setTotalBalance(new BigDecimal("710.0"));
         Customer retrieved = testCd.getCustomerByNameAndPassword("Russell Hoffman", "admin");
         Assert.assertEquals("Valid name and password should return customer", CUSTOMER_1, retrieved);
     }
@@ -98,7 +98,7 @@ public class JdbcCustomerDaoTests extends BaseDaoTests {
         Account account1 = new Account(1, 1, "Checking");
         account1.setAccountBalance(new BigDecimal("10.0"));
         Account account2 = new Account(2, 1, "Savings");
-        account2.setAccountBalance(new BigDecimal("200.0"));
+        account2.setAccountBalance(new BigDecimal("700.0"));
         Account account3 = new Account(5,1,"Checking");
         account3.setAccountBalance(BigDecimal.ZERO);
         List<Account> expected = new ArrayList<>();
@@ -118,7 +118,7 @@ public class JdbcCustomerDaoTests extends BaseDaoTests {
     @Test
     public void when_username_and_password_found_then_get_customer_by_name_and_passsword_returns_correct_customer() {
         Customer actual = testCd.getCustomerByNameAndPassword("Russell Hoffman", "admin");
-        CUSTOMER_1.setTotalBalance(new BigDecimal("210.0"));
+        CUSTOMER_1.setTotalBalance(new BigDecimal("710.0"));
         Assert.assertEquals("If user is returning, return correct user", CUSTOMER_1, actual);
     }
 
