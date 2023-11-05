@@ -9,11 +9,6 @@ public class BankingApp {
         UserInterface ui = new UserInterface();
         Session session = new Session(ui);
         session.setup();
-        if (session.customerIsNew) {
-            session.promptForAccountType();
-        } else {
-            session.greetAndSelect();
-        }
         session.transact();
     }
 

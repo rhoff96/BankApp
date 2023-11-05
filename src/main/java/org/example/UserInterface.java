@@ -66,6 +66,16 @@ public class UserInterface {
 
     }
 
+    public boolean getOneOrTwo() {
+        String response = userInput.nextLine();
+        while (!(response.equals("1")) && (!response.equals("2"))) {
+            System.out.println("Please choose one of the options.");
+            response = userInput.nextLine();
+        }
+        boolean isNew = response.equals("2");
+        return isNew;
+    }
+
     public BigDecimal getBigDec() {
         String response = userInput.nextLine();
         while (!Pattern.compile("^[+]?\\d+([.]\\d+)?$").matcher(response).matches()) {

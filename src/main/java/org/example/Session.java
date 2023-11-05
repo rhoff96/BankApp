@@ -2,11 +2,9 @@ package org.example;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.example.dao.*;
-import org.example.exception.DaoException;
 import org.example.model.Account;
 import org.example.model.Customer;
 import org.example.model.Transaction;
-import org.springframework.dao.DataIntegrityViolationException;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -46,7 +44,12 @@ public class Session {
 //        scheduler.accrueInterest();
 //        scheduler.chargeMaintenanceFee();
         printOpening();
-        welcome();
+        currentCustomer = createOrAccessProfile();
+        if (customerIsNew) {
+            promptForAccountType();
+        } else {
+            greetAndSelect();
+        }
     }
 
     public void printOpening() {
@@ -64,26 +67,25 @@ public class Session {
         ui.put("-------------------------------------------------------------");
     }
 
-    public Customer welcome() {
+    public Customer createOrAccessProfile() {
         while (true) {
-            ui.put("Please log in by entering your 'Firstname Lastname': ");
+            ui.put("Please choose an option: \n1. Log in\n2. Register");
+            customerIsNew = ui.getOneOrTwo();
+            ui.put("Please enter your 'Firstname Lastname': ");
             name = ui.getAlpha();
             ui.put("Please enter your password (must be at least 12 characters): ");
             password = ui.getPassword();
-            currentCustomer = lookUpCustomer();
+
+            Authentication authentication = new Authentication(name, password, cd, customerIsNew);
+            currentCustomer = authentication.authenticate();
+
             if (currentCustomer == null) {
-                ui.put("Access Denied. Please (T)ry again or (C)reate a new customer profile: ");
-                String choice = ui.getAlpha();
-                if (choice.equalsIgnoreCase("C")) {
-                    currentCustomer = createCustomer();
-                    ui.put("Profile created. Welcome, " + currentCustomer.getFirstName() + "!");
-                    customerIsNew = true;
-                    break;
-                }
+                ui.put("Access Denied.");
             } else {
                 break;
             }
         }
+        ui.put("Profile created. Welcome, " + currentCustomer.getFirstName() + "!");
         return currentCustomer;
     }
 
@@ -98,21 +100,6 @@ public class Session {
         createAccount(accountType);
     }
 
-    public Customer createCustomer() {
-        Customer customer = new Customer();
-        customer.setName(name);
-        customer.setPassword(password);
-        return cd.createCustomer(customer);
-    }
-
-    public Customer lookUpCustomer() {
-        try {
-            currentCustomer = cd.getCustomerByNameAndPassword(name, password);
-        } catch (DataIntegrityViolationException e) {
-            throw new DaoException("Data integrity violation", e);
-        }
-        return currentCustomer;
-    }
 
     public Account greetAndSelect() {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -175,14 +162,14 @@ public class Session {
         boolean continueSession = true;
         while (continueSession) {
             ui.put("Current account is " + currentAccount.toString());
-            ui.put("Previous transactions: ");
+            ui.put("\nPrevious transactions: \n");
             for (Transaction transaction : td.getTransactionsByAccountNumber(currentAccount.getAccountNumber())) {
                 ui.put(transaction.toString());
             }
             if (this.cd.getAccountsByCustomerId(currentCustomer.getCustomerId()).size() == 1) {
-                ui.put("Would you like to (W)ithdraw funds, (D)eposit funds, (G)et balance, or (O)pen another account? ");
+                ui.put("\nWould you like to (W)ithdraw funds, (D)eposit funds, (G)et balance, or (O)pen another account? ");
             } else {
-                ui.put("Would you like to (W)ithdraw funds, (D)eposit funds, (T)ransfer between accounts," +
+                ui.put("\nWould you like to (W)ithdraw funds, (D)eposit funds, (T)ransfer between accounts," +
                         " (L)ist all accounts, (S)witch accounts or (O)pen another account? ");
             }
             String choice = ui.getAlpha().toLowerCase();
@@ -196,11 +183,11 @@ public class Session {
 
     public boolean promptToContinue() {
         boolean keepBanking = true;
-            ui.put("Would you like to keep banking? (y/n)");
-            String response = ui.getYesNo();
-            if (response.equalsIgnoreCase("n")) {
-                keepBanking = false;
-            }
+        ui.put("Would you like to keep banking? (y/n)");
+        String response = ui.getYesNo();
+        if (response.equalsIgnoreCase("n")) {
+            keepBanking = false;
+        }
         return keepBanking;
     }
 
@@ -218,18 +205,7 @@ public class Session {
     public void transactionAction(String choice) {
         switch (choice) {
             case "r":
-                Report report = new Report(ui, td);
-                List<Transaction> transactions = report.getReportParameters();
-                for (Transaction transaction : transactions) {
-                    ui.put(transaction.toString());
-                }
-                ui.put("Would you like to save these records? (y/n): ");
-                String response = ui.getYesNo();
-                if (response.equalsIgnoreCase("Y")){
-                    Logger logger = new Logger();
-                    logger.writeFile(transactions);
-                }
-                ui.put("Records saved");
+                promptForReport();
                 break;
             case "w":
                 ui.put("Please enter withdrawal amount");
@@ -261,6 +237,32 @@ public class Session {
         ui.put("Current balance is $" + df.format(currentAccount.getAccountBalance()));
     }
 
+    private void promptForReport() {
+        Report report = new Report(ui, td);
+        List<Transaction> transactions = report.getReportParameters();
+        for (Transaction transaction : transactions) {
+            ui.put(transaction.toString());
+        }
+        ui.put("Would you like to save these records? (y/n): ");
+        String response = ui.getYesNo();
+        if (response.equalsIgnoreCase("Y")) {
+            Logger logger = new Logger();
+            ui.put("Please enter new filename (no whitespace): ");
+            String filePath = ui.getString();
+            ui.put("Please enter file format: ");
+            ui.put("1. .txt \n2. .csv");
+            int format = ui.getInt();
+            String extension = "";
+            if (format >= 2) {
+                extension += ".csv";
+            } else {
+                extension += ".txt";
+            }
+            logger.writeFile(transactions, filePath, extension);
+        }
+        ui.put("Records saved");
+
+    }
 
     private BigDecimal promptForTransferAmount() {
         BigDecimal transferBig;
