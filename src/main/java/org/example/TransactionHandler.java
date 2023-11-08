@@ -31,13 +31,27 @@ public class TransactionHandler {
         return td.createTransaction(newTransaction);
     }
 
-    public void transfer(Account accountTo) {
-        int tempAcctNumber = accountNumber;
-        accountNumber = accountTo.getAccountNumber();
-        processTransaction();
-        accountNumber = tempAcctNumber;
-        amount = amount.multiply(BigDecimal.valueOf(-1));
-        processTransaction();
+    public boolean transfer(Account accountTo) {
+        BigDecimal balance = ad.getAccountById(accountNumber).getAccountBalance();
+        if (ad.getAccountById(accountNumber).getAccountType().equals("Savings")) {
+            savingsWithdraw();
+            amount = amount.multiply(BigDecimal.valueOf(-1));
+            if (balance.compareTo(ad.getAccountById(accountNumber).getAccountBalance()) == 0){
+                return false;
+            } else {
+                accountNumber = accountTo.getAccountNumber();
+                processTransaction();
+                return true;
+            }
+        } else {
+            int tempAcctNumber = accountNumber;
+            accountNumber = accountTo.getAccountNumber();
+            processTransaction();
+            accountNumber = tempAcctNumber;
+            amount = amount.multiply(BigDecimal.valueOf(-1));
+            processTransaction();
+        }
+        return false;
     }
 
     public BigDecimal withdrawCheckingOrSavings() {
@@ -76,14 +90,15 @@ public class TransactionHandler {
                 Account toUpdate = ad.getAccountById(accountNumber);
                 int currentWithdrawalCount = toUpdate.getWithdrawalCount();
                 toUpdate.setWithdrawalCount(currentWithdrawalCount + 1);
+                ad.updateAccount(toUpdate);
                 return new BigDecimal("-2.0");
             }
-        } else {
-            Account toUpdate = ad.getAccountById(accountNumber);
-            int currentWithdrawalCount = toUpdate.getWithdrawalCount();
-            toUpdate.setWithdrawalCount(currentWithdrawalCount + 1);
-            checkingWithdraw();
         }
+        Account toUpdate = ad.getAccountById(accountNumber);
+        int currentWithdrawalCount = toUpdate.getWithdrawalCount();
+        toUpdate.setWithdrawalCount(currentWithdrawalCount + 1);
+        ad.updateAccount(toUpdate);
+        checkingWithdraw();
 
         return ad.getAccountById(accountNumber).getAccountBalance();
     }
