@@ -7,6 +7,8 @@ import org.example.model.Customer;
 import org.example.model.Transaction;
 
 import java.math.BigDecimal;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -106,16 +108,15 @@ public class Session {
     public Account createAccount(String accountType) {
         if (accountType.equalsIgnoreCase("c")) {
             accountType = "Checking";
-            Account checking = new Account();
-            checking.setAccountType(accountType);
-            checking.setCustomerId(currentCustomer.getCustomerId());
-            currentAccount = ad.createAccount(checking);
+            AccountHandler handler = new AccountHandler(currentCustomer.getCustomerId(), accountType, ad);
+            currentAccount = handler.createAccount();
         } else if (accountType.equalsIgnoreCase("s")) {
             accountType = "Savings";
-            Account savings = new Account();
-            savings.setAccountType(accountType);
-            savings.setCustomerId(currentCustomer.getCustomerId());
-            currentAccount = ad.createAccount(savings);
+            BigDecimal initialDeposit = ui.getInitialSavingsDeposit();
+            AccountHandler handler = new AccountHandler(currentCustomer.getCustomerId(),accountType, ad);
+            currentAccount = handler.createAccount();
+            TransactionHandler deposit = new TransactionHandler(currentAccount.getAccountNumber(), initialDeposit, ad, td);
+            deposit.processTransaction();
         }
         return currentAccount;
     }
@@ -203,7 +204,7 @@ public class Session {
                 } else if (result.compareTo(new BigDecimal("-3.0")) == 0) {
                     ui.put("Transaction failed. You have exceeded the maximum number of allowed withdrawals per session from a savings account.");
                 }
-                if ((ad.getAccountById(currentAccount.getAccountNumber())).getAccountType().equals("Savings")){
+                if ((ad.getAccountById(currentAccount.getAccountNumber())).getAccountType().equals("Savings")) {
                     System.out.printf("Savings account has %d remaining withdrawals this month. ", SAVINGS_WITHDRAWAL_MAX - (ad.getAccountById(currentAccount.getAccountNumber())).getWithdrawalCount());
                 }
                 break;
@@ -280,7 +281,6 @@ public class Session {
 
     public Account pickTransferAccount() {
         ui.put("Current account: #" + ad.getAccountById(currentAccount.getAccountNumber()));
-//                " Balance $" + df.format(ad.getAccountById(currentAccount.getAccountNumber()).getAccountBalance()));
         ui.put("Available accounts to transfer to: ");
         List<Account> accounts = cd.getAccountsByCustomerId((currentAccount.getCustomerId()));
         for (Account account : accounts) {

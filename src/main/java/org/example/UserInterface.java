@@ -54,12 +54,8 @@ public class UserInterface {
 
     public int getInt() {
         String response = userInput.nextLine();
-        while (response.equals("") || response.contains(".")) {
+        while (Pattern.compile("[^\\d]").matcher(response).find() || !response.matches("\\d+")) {
             System.out.println("Please enter an integer value");
-            response = userInput.nextLine();
-        }
-        while (Pattern.compile("[a-zA-Z\\s]*").matcher(response).matches()) {
-            System.out.println("Please enter a integer value");
             response = userInput.nextLine();
         }
         return Integer.parseInt(response);
@@ -84,6 +80,16 @@ public class UserInterface {
         }
         BigDecimal bigResponse = new BigDecimal(response);
         return roundBigDec(bigResponse);
+    }
+
+    public BigDecimal getInitialSavingsDeposit() {
+        System.out.println("Please enter initial deposit amount ($500 or greater):");
+        BigDecimal initialDeposit = this.getBigDec();
+        while (initialDeposit.compareTo(new BigDecimal("500.0")) < 0) {
+            System.out.println("Amount must be greater than or equal to $500");
+            initialDeposit = this.getBigDec();
+        }
+        return initialDeposit;
     }
 
     public BigDecimal roundBigDec(BigDecimal input) {

@@ -67,7 +67,8 @@ public class TransactionHandler {
             return new BigDecimal("-3.0");
         }
         if (ad.getAccountById(accountNumber).getAccountBalance().subtract(amount).compareTo(MINIMUM_BALANCE) < 0) {
-            if (ad.getAccountById(accountNumber).getAccountBalance().subtract(amount).compareTo(BigDecimal.ZERO) < 0) {
+            if (ad.getAccountById(accountNumber).getAccountBalance().subtract(amount).compareTo(BigDecimal.ZERO) < 0 ||
+                    ad.getAccountById(accountNumber).getAccountBalance().subtract(amount).subtract(OVERDRAFT_FEE).compareTo(BigDecimal.ZERO) < 0) {
                 return new BigDecimal("-1.0");
             } else {
                 amount = (amount.add(OVERDRAFT_FEE)).multiply(BigDecimal.valueOf(-1));
