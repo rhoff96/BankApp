@@ -1,4 +1,4 @@
-import org.example.AccountHandler;
+import org.example.workflow.AccountHandler;
 import org.example.dao.AccountDao;
 import org.example.dao.BaseDaoTests;
 import org.example.dao.JdbcAccountDao;

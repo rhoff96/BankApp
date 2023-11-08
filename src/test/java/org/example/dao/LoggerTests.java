@@ -1,6 +1,6 @@
 package org.example.dao;
 
-import org.example.Logger;
+import org.example.report.Logger;
 import org.example.model.Transaction;
 import org.junit.Assert;
 import org.junit.Test;

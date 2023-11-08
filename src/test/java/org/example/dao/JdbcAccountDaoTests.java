@@ -15,7 +15,7 @@ public class JdbcAccountDaoTests extends BaseDaoTests {
     private JdbcAccountDao testAd;
     private static final Account ACCOUNT_1 = new Account(1, 1, "Checking");
     private static final Account ACCOUNT_2 = new Account(7, 1, "Savings", 0);
-    private static final Account ACCOUNT_3 = new Account(3, 1, "Checking");
+    private static final Account ACCOUNT_3 = new Account(3, 2, "Checking");
     private static final Account ACCOUNT_4 = new Account(4, 2, "Savings");
     private static final Account ACCOUNT_5 = new Account(5, 1, "Checking");
     private static final Account ACCOUNT_6 = new Account(2, 1, "Savings");

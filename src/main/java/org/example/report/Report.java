@@ -1,5 +1,6 @@
-package org.example;
+package org.example.report;
 
+import org.example.CLI.UserInterface;
 import org.example.dao.TransactionDao;
 import org.example.model.Transaction;
 

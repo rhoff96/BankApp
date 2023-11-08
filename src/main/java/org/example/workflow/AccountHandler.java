@@ -1,4 +1,4 @@
-package org.example;
+package org.example.workflow;
 
 import org.example.dao.AccountDao;
 import org.example.model.Account;

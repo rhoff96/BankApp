@@ -1,6 +1,6 @@
 package org.example.dao;
 
-import org.example.UserInterface;
+import org.example.CLI.UserInterface;
 import org.junit.Assert;
 import org.junit.Test;
 

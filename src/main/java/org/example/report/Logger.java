@@ -1,4 +1,4 @@
-package org.example;
+package org.example.report;
 
 import org.example.model.Transaction;
 

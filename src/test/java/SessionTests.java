@@ -1,9 +1,8 @@
-import org.example.Session;
-import org.example.UserInterface;
+import org.example.CLI.Session;
+import org.example.CLI.UserInterface;
 import org.example.dao.BaseDaoTests;
 import org.example.dao.JdbcCustomerDao;
 import org.example.model.Customer;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 

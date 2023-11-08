@@ -1,4 +1,4 @@
-import org.example.Authentication;
+import org.example.workflow.Authentication;
 import org.example.dao.BaseDaoTests;
 import org.example.dao.CustomerDao;
 import org.example.dao.JdbcCustomerDao;
