@@ -16,7 +16,10 @@ public class BankingApp {
     public static void main(String[] args) {
         BankingApp ba = new BankingApp();
         ba.run();
+
+        int i = 0;
     }
+
 
 }
 
