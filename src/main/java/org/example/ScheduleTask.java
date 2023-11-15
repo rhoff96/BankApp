@@ -60,7 +60,7 @@ public class ScheduleTask {
                         }
                     }
                     logDao.createLogEntry("fee");
-                    System.out.println("Maintenance fee assessed on " + LocalDate.now());
+                    System.out.println("Maintenance fee assessed on " + LocalDateTime.now());
                 }
             }
         };
@@ -114,7 +114,7 @@ public class ScheduleTask {
                         }
                     }
                     logDao.createLogEntry("interest");
-                    System.out.println("Interest accrued on " + LocalDate.now());
+                    System.out.println("Interest accrued on " + LocalDateTime.now());
                 }
             }
         };
