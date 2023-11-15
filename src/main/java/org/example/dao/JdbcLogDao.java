@@ -22,7 +22,7 @@ public class JdbcLogDao implements LogDao {
 
     @Override
     public MonthlyLogEntry getLastLoggedTime(String action) {
-        MonthlyLogEntry lastEntry = null;
+        MonthlyLogEntry lastEntry = new MonthlyLogEntry();
         final String sql = "SELECT time, action\n" +
                 "FROM log\n" +
                 "WHERE action = ?" +
@@ -31,7 +31,6 @@ public class JdbcLogDao implements LogDao {
         try {
             SqlRowSet results = jdbcTemplate.queryForRowSet(sql, action);
             if (results.next()) {
-                lastEntry = new MonthlyLogEntry();
                 lastEntry.setTime(results.getTimestamp("time"));
                 lastEntry.setType(results.getString("action"));
             }
