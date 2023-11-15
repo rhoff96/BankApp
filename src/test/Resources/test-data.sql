@@ -28,6 +28,13 @@ CREATE TABLE transaction (
 	CONSTRAINT FK_transaction_account FOREIGN KEY (account_number) REFERENCES account(account_number)
 );
 
+CREATE TABLE log (
+    entry_id SERIAL PRIMARY KEY,
+    time timestamp NOT NULL,
+    action varchar(10) NOT NULL
+);
+
+
 INSERT INTO customer(name, password) VALUES ('Russell Hoffman','admin'); --customer #1
 INSERT INTO customer(name, password) VALUES ('Test Customer','testpassword'); -- customer #2
 
@@ -42,4 +49,6 @@ INSERT INTO transaction(time, account_number, previous_balance, amount) VALUES (
 INSERT INTO transaction(time, account_number, previous_balance, amount) VALUES ('2019-09-15 00:00:00',3,300.0,50.0);
 INSERT INTO transaction(time, account_number, previous_balance, amount) VALUES ('2023-01-01 00:00:00',4,50.0, 200.0);
 
+
+INSERT INTO log(time, action) VALUES ('2023-01-01 00:00:00','interest');
 COMMIT;

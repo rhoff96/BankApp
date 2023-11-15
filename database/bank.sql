@@ -26,6 +26,12 @@ CREATE TABLE transaction (
 	CONSTRAINT FK_transaction_account FOREIGN KEY (account_number) REFERENCES account(account_number)
 );
 
+CREATE TABLE log (
+    entry_id SERIAL PRIMARY KEY,
+    time timestamp NOT NULL,
+    action varchar(10) NOT NULL
+);
+
 
 INSERT INTO customer(name, password) VALUES ('Russell Hoffman','adminpassword');
 

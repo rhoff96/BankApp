@@ -1,6 +1,7 @@
 package org.example.CLI;
 
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.example.ScheduleTask;
 import org.example.report.Logger;
 import org.example.report.Report;
 import org.example.dao.*;
@@ -25,6 +26,7 @@ public class Session {
     private CustomerDao cd;
     private AccountDao ad;
     private TransactionDao td;
+    private LogDao ld;
     private final DecimalFormat df = new DecimalFormat("#,###.00");
 
 
@@ -40,9 +42,9 @@ public class Session {
         cd = new JdbcCustomerDao(dataSource);
         ad = new JdbcAccountDao(dataSource);
         td = new JdbcTransactionDao(dataSource);
-//        ScheduleTask scheduler = new ScheduleTask();
-//        scheduler.accrueInterest();
-//        scheduler.chargeMaintenanceFee();
+        ld = new JdbcLogDao(dataSource);
+        ScheduleTask scheduler = new ScheduleTask(ad,cd,td,ld);
+        scheduler.runMonthlyTasks();
         printOpening();
         currentCustomer = createOrAccessProfile();
         if (customerIsNew) {
