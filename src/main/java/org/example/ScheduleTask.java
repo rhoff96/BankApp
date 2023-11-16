@@ -60,7 +60,7 @@ public class ScheduleTask {
                         }
                     }
                     logDao.createLogEntry("fee");
-                    System.out.println("Maintenance fee assessed on " + LocalDateTime.now());
+//                    System.out.println("Maintenance fee assessed on " + LocalDateTime.now());
                 }
             }
         };
@@ -114,15 +114,17 @@ public class ScheduleTask {
                         }
                     }
                     logDao.createLogEntry("interest");
-                    System.out.println("Interest accrued on " + LocalDateTime.now());
+//                    System.out.println("Interest accrued on " + LocalDateTime.now());
                 }
             }
         };
-        Timer timer = new Timer("Timer");
+//        Timer timer = new Timer("Timer");
+
+        repeatedTask.run();
 
         long delay = 0L;
         long everyTenSeconds = 1000L * 10L;
         //long oncePerDay = 1000L * 60L * 60L * 24L;
-        timer.scheduleAtFixedRate(repeatedTask, delay, everyTenSeconds);
+//        timer.scheduleAtFixedRate(repeatedTask, delay, everyTenSeconds);
     }
 }

@@ -18,4 +18,10 @@ public interface LogDao {
      */
 
     int createLogEntry(String type);
+
+    /**
+     *
+     * @return the count of the most recent monthly transactions completed
+     */
+    int getLastMonthlyTransactionCount();
 }

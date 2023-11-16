@@ -58,4 +58,22 @@ public class JdbcLogDao implements LogDao {
         }
         return newId;
     }
+
+    @Override
+    public int getLastMonthlyTransactionCount() {
+        LocalDateTime transactionWindow = LocalDateTime.now().minusSeconds(1);
+        int totalTransactions = 0;
+        final String sql = "SELECT COUNT(transaction_id) AS total " +
+                "FROM transaction WHERE time > ?;\n";
+
+        try {
+            SqlRowSet results = jdbcTemplate.queryForRowSet(sql, transactionWindow);
+            if (results.next()) {
+                totalTransactions = results.getInt("total");
+            }
+        } catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database");
+        }
+        return totalTransactions;
+    }
 }

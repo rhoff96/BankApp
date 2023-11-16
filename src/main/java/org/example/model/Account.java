@@ -85,7 +85,7 @@ public class Account {
         if (!(this.getAccountNumber() == other.getAccountNumber())) {
             return false;
         }
-        if (!(this.getAccountBalance().equals(other.getAccountBalance()))) {
+        if (this.getAccountBalance().compareTo(other.getAccountBalance()) != 0) {
             return false;
         }
         return this.getCustomerId() == other.getCustomerId();

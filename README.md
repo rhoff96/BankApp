@@ -43,5 +43,3 @@ Following the first few weeks of the program, I evolved my program to persist da
 # Future Functionality
 I intend to build this program out with an API and a frontend, incorporate transfers between users, and implement more robust security.
 
-> [!NOTE]
-> TimerTask methods are set to execute once per month, but will only be accurate in a production context.

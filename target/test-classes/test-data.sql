@@ -1,5 +1,6 @@
 START TRANSACTION;
 
+DROP TABLE IF EXISTS log;
 DROP TABLE IF EXISTS transaction;
 DROP TABLE IF EXISTS account;
 DROP TABLE IF EXISTS customer;
@@ -15,7 +16,7 @@ CREATE TABLE account (
 	account_number SERIAL PRIMARY KEY,
 	customer_id int NOT NULL,
 	type varchar(10) NOT NULL,
-	withdrawal_count int,
+	withdrawal_count int DEFAULT 0,
 	CONSTRAINT FK_customer_account FOREIGN KEY (customer_id) REFERENCES customer(customer_id)
 );
 

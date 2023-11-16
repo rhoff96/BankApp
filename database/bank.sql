@@ -14,7 +14,7 @@ CREATE TABLE account (
 	account_number SERIAL PRIMARY KEY,
 	customer_id int NOT NULL,
 	type varchar(10) NOT NULL,
-	withdrawal_count int,
+	withdrawal_count int DEFAULT 0,
 	CONSTRAINT FK_customer_account FOREIGN KEY (customer_id) REFERENCES customer(customer_id)
 );
 
@@ -41,3 +41,6 @@ INSERT INTO account(customer_id, type) VALUES (1, 'Savings');
 
 INSERT INTO transaction(time, account_number, previous_balance, amount) VALUES ('2023-10-22 17:55:00',1,0,100);
 INSERT INTO transaction(time, account_number, previous_balance, amount) VALUES ('2023-10-22 18:16:00',2,0,200);
+
+INSERT INTO log(time, action) VALUES ('2023-01-01 00:00:00', 'interest');
+INSERT INTO log(time, action) VALUES ('2023-01-01 00:00:01', 'fee');

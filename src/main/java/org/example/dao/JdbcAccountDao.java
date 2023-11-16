@@ -105,8 +105,7 @@ public class JdbcAccountDao implements AccountDao {
     @Override
     public List<Account> getAllAccounts() {
         List<Account> accounts = new ArrayList<>();
-        final String sql = "SELECT account_number, customer_id, type, withdrawal_count\n" +
-                "FROM account;";
+        final String sql = "SELECT account_number FROM account;";
         try {
             SqlRowSet results = jdbcTemplate.queryForRowSet(sql);
             while (results.next()) {
