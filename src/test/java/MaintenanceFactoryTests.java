@@ -1,10 +1,10 @@
-import org.example.ScheduleTask;
+import org.example.monthly.MaintenanceTaskFactory;
 import org.example.dao.*;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ScheduleTaskTests extends BaseDaoTests {
+public class MaintenanceFactoryTests extends BaseDaoTests {
 
     private JdbcLogDao testLd;
     private JdbcTransactionDao testTd;
@@ -21,8 +21,8 @@ public class ScheduleTaskTests extends BaseDaoTests {
 
     @Test
     public void when_more_than_one_month_passed_then_accrue_interest_accrues_interest(){
-        ScheduleTask testTask = new ScheduleTask(testAd,testCd,testTd,testLd);
-        testTask.accrueInterest();
+        MaintenanceTaskFactory factory = new MaintenanceTaskFactory(testAd,testCd,testTd,testLd);
+        factory.accrueInterest();
         int retrieved = testLd.getLastMonthlyTransactionCount();
         int expected = 2;
         Assert.assertEquals("Should only make 2 transactions",expected,retrieved);
@@ -34,6 +34,11 @@ public class ScheduleTaskTests extends BaseDaoTests {
     }
     @Test
     public void when_more_than_one_month_then_monthly_fees_applied_to_low_balance_savings_accounts(){
+        MaintenanceTaskFactory factory = new MaintenanceTaskFactory(testAd,testCd,testTd,testLd);
+        factory.chargeMaintenanceFee();
+        int retrieved = testLd.getLastMonthlyTransactionCount();
+        int expected = 1;
+        Assert.assertEquals("Should only make 1 transaction",expected,retrieved);
 
     }
     @Test

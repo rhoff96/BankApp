@@ -52,4 +52,5 @@ INSERT INTO transaction(time, account_number, previous_balance, amount) VALUES (
 
 
 INSERT INTO log(time, action) VALUES ('2023-01-01 00:00:00','interest');
+INSERT INTO log(time, action) VALUES ('2023-01-01 00:00:01','fee');
 COMMIT;
